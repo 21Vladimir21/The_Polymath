@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Net.NetworkInformation;
+using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace _Main._Scripts.GameFieldLogic
 {
@@ -9,12 +10,16 @@ namespace _Main._Scripts.GameFieldLogic
     {
         [field: SerializeField] private GameFieldSell[] cells;
 
+        [SerializeField] private List<LetterTile> letterTiles;
+
         private GameFieldSell[,] _grid;
         private DragAndDrop _dragAndDrop;
+        private FieldChecker _fieldChecker;
+        private WordCreator _wordCreator;
 
         private List<string> _words = new()
         {
-            "кам", "мак", "скам"
+            "кам", "мак", "скам", "хуй", "смак",
         };
 
         private List<string> _createdWords = new();
@@ -22,6 +27,17 @@ namespace _Main._Scripts.GameFieldLogic
         private void Start()
         {
             InitializeGrid();
+            _fieldChecker = new FieldChecker(_grid);
+            _wordCreator = new WordCreator(_grid);
+            CreateRandomWord();
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.A))
+            {
+                CheckingGridForCorrectnessWords();
+            }
         }
 
         private void InitializeGrid()
@@ -36,94 +52,72 @@ namespace _Main._Scripts.GameFieldLogic
             }
         }
 
-
-        private void Update()
+        //TODO: тестовая штука , надо доработать и возможно убрать отсюда когда будет сделана инициализация игры 
+        private void CreateRandomWord()
         {
-            if (Input.GetKeyDown(KeyCode.A))
+            var randomWordIndex = Random.Range(0, _words.Count);
+            var randomWord = _words[randomWordIndex];
+            var parsedWord = randomWord.ToCharArray();
+            if (parsedWord.Length > 3)
             {
-                Debug.ClearDeveloperConsole();
-                CheckingField();
+                CreateRandomWord();
+                return;
+            }
+
+            var testStartIndexes = new Vector2[]
+            {
+                new(2, 1),
+                new(2, 2),
+                new(2, 3)
+            };
+
+
+            for (int i = 0; i < testStartIndexes.Length; i++)
+            {
+                var tilePrefab = letterTiles.FirstOrDefault(x =>
+                    x.Letter.Equals(parsedWord[i].ToString(), StringComparison.OrdinalIgnoreCase));
+                var tile = Instantiate(tilePrefab, transform); //TODO:Сделать взятие букв из пула 
+                _grid[(int)testStartIndexes[i].x, (int)testStartIndexes[i].y].AddTile(tile);
+                tile.SetOnField();
             }
         }
-
-        private void CheckingField()
+        
+        //TODO:Все что ниже вынести в отдельный класс
+        private void CheckingGridForCorrectnessWords()
         {
-            var indexes = FindStartCellsIndexes();
+            var startWordsKeyValuePairs = _fieldChecker.FindStartCellsIndexes();
             _createdWords.Clear();
 
-            foreach (var index in indexes)
-            {
-                // Debug.Log(index);
-                CreateAWord(index);
-            }
+            List<Word> words = new();
+            foreach (var keyValuePair in startWordsKeyValuePairs)
+                words.AddRange(_wordCreator.CreateAWords(keyValuePair.Key, keyValuePair.Value));
 
-            foreach (var word in _createdWords)
+            foreach (var word in words)
             {
-                Debug.Log($"Created word: {word}");
+                if (IsWordValid(word)) //TODO: сделать проверку на повторение с уже созданными словами 
+                {
+                    MarkTilesAsPartOfWord(word.Tiles);
+                    _createdWords.Add(word.StringWord);
+                    //TODO:Хрень для дебага
+                    Debug.Log($"Created word: {word.StringWord}");
+                }
+                else if (word.StringWord.Length > 1) 
+                    Debug.Log($"Word {word.StringWord} not found");
             }
         }
 
-        private List<Vector2> FindStartCellsIndexes()
+        private bool IsWordValid(Word word) //TODO: в FC
         {
-            List<Vector2> indexes = new List<Vector2>();
-            for (int i = 0; i < _grid.GetLength(0); i++)
-            {
-                for (int j = 0; j < _grid.GetLength(1); j++)
-                {
-                    if (!_grid[i, j].IsBusy)
-                        continue;
-
-                    if (i == 0 && j == 0)
-                    {
-                        indexes.Add(new Vector2(i, j));
-                        continue;
-                    }
-
-                    bool isTopEdge = i == 0;
-                    bool isLeftEdge = j == 0;
-                    bool hasTopNeighbor = !isTopEdge && _grid[i - 1, j].IsBusy;
-                    bool hasLeftNeighbor = !isLeftEdge && _grid[i, j - 1].IsBusy;
-
-                    if ((isTopEdge && !hasLeftNeighbor)
-                        || (isLeftEdge && !hasTopNeighbor)
-                        || (!hasTopNeighbor && !hasLeftNeighbor))
-                        indexes.Add(new Vector2(i, j));
-                }
-            }
-
-            return indexes;
+            bool wordFits = word.Tiles.Any(tile => tile.InRightWord);
+            return _words.Any(w => string.Equals(w, word.StringWord, StringComparison.OrdinalIgnoreCase)) &&
+                   wordFits;
         }
 
-        private void CreateAWord(Vector2 index)
+        private void MarkTilesAsPartOfWord(List<LetterTile> currentWordTiles) //TODO: в FC
         {
-            string word = null;
-            word += _grid[(int)index.x, (int)index.y].CurrentTile.Letter;
-
-            if (_grid[(int)index.x + 1, (int)index.y].IsBusy)
+            foreach (var tile in currentWordTiles)
             {
-                for (int i = (int)index.x + 1; i < _grid.GetLength(0); i++)
-                {
-                    if (_grid[i, (int)index.y].IsBusy)
-                        word += _grid[i, (int)index.y].CurrentTile.Letter;
-                    else break;
-                }
-
-                _createdWords.Add(word);
-            }
-
-            string secondWord = null;
-            secondWord += _grid[(int)index.x, (int)index.y].CurrentTile.Letter;
-
-            if (_grid[(int)index.x, (int)index.y + 1].IsBusy)
-            {
-                for (int i = (int)index.y + 1; i < _grid.GetLength(0); i++)
-                {
-                    if (_grid[(int)index.x, i].IsBusy)
-                        secondWord += _grid[(int)index.x, i].CurrentTile.Letter;
-                    else break;
-                }
-
-                _createdWords.Add(secondWord);
+                tile.SetInRightWord();
             }
         }
     }

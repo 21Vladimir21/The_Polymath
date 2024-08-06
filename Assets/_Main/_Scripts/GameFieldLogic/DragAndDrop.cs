@@ -18,7 +18,7 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public void OnPointerDown(PointerEventData eventData)
     {
         if (eventData.pointerCurrentRaycast.gameObject.TryGetComponent(out GameFieldSell cell))
-            if (cell.IsBusy)
+            if (cell.IsBusy && cell.CurrentTile.CanMove)
                 StartDrag(cell);
     }
 
@@ -39,7 +39,9 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     {
         if (_isDragged || cell.IsBusy == false) return;
         _startDragCell = cell;
-        _draggedObject = cell.CurrentTile.RectTransform;
+        var cellCurrentTile = cell.CurrentTile;
+        cellCurrentTile.ResetTile();
+        _draggedObject = cellCurrentTile.RectTransform;
         _isDragged = true;
     }
 
