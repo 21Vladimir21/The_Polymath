@@ -8,52 +8,45 @@ namespace _Main._Scripts.GameFieldLogic
 {
     public class GameField : MonoBehaviour
     {
-        [field: SerializeField] private GameFieldSell[] cells;
-
+        [field: SerializeField] public NewLettersPanel NewLettersPanel { get; private set; }
+        
+        [field: SerializeField] private GameFieldCell[] cells;
         [SerializeField] private List<LetterTile> letterTiles;
 
-        private GameFieldSell[,] _grid;
+        private GameFieldCell[,] _grid;
         private DragAndDrop _dragAndDrop;
         private FieldChecker _fieldChecker;
         private WordCreator _wordCreator;
 
         private List<string> _words = new()
         {
-            "кам", "мак", "скам", "хуй", "смак",
+            "кам", "кама", "мак", "мака", "скам", "хуй", "смак", "хуйа", "акам", "амак", "ахуй",
         };
 
         private List<string> _createdWords = new();
 
-        private void Start()
+        public void Init()
         {
             InitializeGrid();
             _fieldChecker = new FieldChecker(_grid);
             _wordCreator = new WordCreator(_grid);
-            CreateRandomWord();
-        }
-
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.A))
-            {
-                CheckingGridForCorrectnessWords();
-            }
         }
 
         private void InitializeGrid()
         {
-            _grid = new GameFieldSell [5, 5];
-            for (int i = 0; i < 5; i++)
+            var maxGridLength = 15;
+            _grid = new GameFieldCell [maxGridLength, maxGridLength];
+            for (int i = 0; i < maxGridLength; i++)
             {
-                for (int j = 0; j < 5; j++)
+                for (int j = 0; j < maxGridLength; j++)
                 {
-                    _grid[i, j] = cells[i * 5 + j];
+                    _grid[i, j] = cells[i * maxGridLength + j];
                 }
             }
         }
 
         //TODO: тестовая штука , надо доработать и возможно убрать отсюда когда будет сделана инициализация игры 
-        private void CreateRandomWord()
+        public void CreateRandomWord()
         {
             var randomWordIndex = Random.Range(0, _words.Count);
             var randomWord = _words[randomWordIndex];
@@ -66,24 +59,24 @@ namespace _Main._Scripts.GameFieldLogic
 
             var testStartIndexes = new Vector2[]
             {
-                new(2, 1),
-                new(2, 2),
-                new(2, 3)
+                new(7, 6),
+                new(7, 7),
+                new(7, 8)
             };
 
 
             for (int i = 0; i < testStartIndexes.Length; i++)
             {
                 var tilePrefab = letterTiles.FirstOrDefault(x =>
-                    x.Letter.Equals(parsedWord[i].ToString(), StringComparison.OrdinalIgnoreCase));
+                    x.LetterString.Equals(parsedWord[i].ToString(), StringComparison.OrdinalIgnoreCase));
                 var tile = Instantiate(tilePrefab, transform); //TODO:Сделать взятие букв из пула 
                 _grid[(int)testStartIndexes[i].x, (int)testStartIndexes[i].y].AddTile(tile);
                 tile.SetOnField();
             }
         }
-        
+
         //TODO:Все что ниже вынести в отдельный класс
-        private void CheckingGridForCorrectnessWords()
+        public void CheckingGridForCorrectnessWords()
         {
             var startWordsKeyValuePairs = _fieldChecker.FindStartCellsIndexes();
             _createdWords.Clear();
@@ -99,10 +92,10 @@ namespace _Main._Scripts.GameFieldLogic
                     MarkTilesAsPartOfWord(word.Tiles);
                     _createdWords.Add(word.StringWord);
                     //TODO:Хрень для дебага
-                    Debug.Log($"Created word: {word.StringWord}");
+                    Debug.Log($"Created word: |{word.StringWord}|, word points with multiplication - |{word.WordPoint}|");
                 }
-                else if (word.StringWord.Length > 1) 
-                    Debug.Log($"Word {word.StringWord} not found");
+                else if (word.StringWord.Length > 1)
+                    Debug.Log($"Word |{word.StringWord}| not found or set not right");
             }
         }
 

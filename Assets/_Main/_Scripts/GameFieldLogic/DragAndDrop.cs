@@ -9,15 +9,15 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private readonly Camera _camera;
 
     private RectTransform _draggedObject;
-    private GameFieldSell _startDragCell;
-    private GameFieldSell _selectedCell;
-    private GameFieldSell _lastSelectedCell;
+    private TileCell _startDragCell;
+    private TileCell _selectedCell;
+    private TileCell _lastSelectedCell;
 
     private bool _isDragged;
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (eventData.pointerCurrentRaycast.gameObject.TryGetComponent(out GameFieldSell cell))
+        if (eventData.pointerCurrentRaycast.gameObject.TryGetComponent(out TileCell cell))
             if (cell.IsBusy && cell.CurrentTile.CanMove)
                 StartDrag(cell);
     }
@@ -29,13 +29,13 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         if (_isDragged == false) return;
         var selectedObject = eventData.pointerCurrentRaycast.gameObject;
 
-        if (selectedObject != null && selectedObject.TryGetComponent(out GameFieldSell cell)) SelectNewCell(cell);
+        if (selectedObject != null && selectedObject.TryGetComponent(out TileCell cell)) SelectNewCell(cell);
         if (_draggedObject == null) return;
 
         _draggedObject.anchoredPosition += eventData.delta / canvas.scaleFactor;
     }
 
-    private void StartDrag(GameFieldSell cell)
+    private void StartDrag(TileCell cell)
     {
         if (_isDragged || cell.IsBusy == false) return;
         _startDragCell = cell;
@@ -45,7 +45,7 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         _isDragged = true;
     }
 
-    private void SelectNewCell(GameFieldSell cell)
+    private void SelectNewCell(TileCell cell)
     {
         if (_startDragCell != cell && cell != _lastSelectedCell)
         {
@@ -57,17 +57,16 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private void ResetDrag()
     {
         if (_selectedCell != null && _selectedCell.IsBusy == false)
-            RearrangeSoldier();
+            RearrangeTile();
         else if (_draggedObject != null) _startDragCell.ResetTilePosition();
 
         ClearDragState();
     }
 
-    private void RearrangeSoldier()
+    private void RearrangeTile()
     {
         _selectedCell.AddTile(_startDragCell.CurrentTile);
         _startDragCell.ClearTileData();
-        _selectedCell.ResetTilePosition();
     }
 
     private void ClearDragState()

@@ -6,15 +6,19 @@ using UnityEngine;
 [RequireComponent(typeof(RectTransform))]
 public class LetterTile : MonoBehaviour
 {
-    [SerializeField] private Letters letter;
-    [field: SerializeField, Range(1, 10)] public int Points { get; private set; }
+    [field: SerializeField] public Letters Letter { get; private set; }
+    [SerializeField, Range(1, 10)] private int points;
     [SerializeField] private TMP_Text letterText;
+    [SerializeField] private TMP_Text pointsText;
     [SerializeField] private RectTransform rectTransform;
+
 
     public bool InRightWord { get; private set; }
     public bool CanMove { get; private set; } = true;
-    public string Letter => letter.ToString();
+    public string LetterString => Letter.ToString();
+    public int Points => points * _multiplierValue;
     public RectTransform RectTransform => rectTransform;
+    private int _multiplierValue = 1;
 
     public void SetOnField()
     {
@@ -28,27 +32,24 @@ public class LetterTile : MonoBehaviour
     {
         InRightWord = false;
         CanMove = true;
+        _multiplierValue = 1;
     }
 
-#if UNITY_EDITOR
+    public void SetMultiplicationValue(int value) => _multiplierValue = value;
 
+#if UNITY_EDITOR
     private void OnValidate()
     {
         if (rectTransform == null) rectTransform = GetComponent<RectTransform>();
         if (letterText == null) letterText = GetComponentInChildren<TMP_Text>();
 
-        letterText.text = Letter;
-        if (Letter == Letters.JackPot.ToString()) letterText.text = "*";
+        letterText.text = LetterString;
+        if (LetterString == Letters.JackPot.ToString()) letterText.text = "*";
+        pointsText.text = points.ToString();
 
         gameObject.name = "LetterTile " + Letter;
 
         EditorUtility.SetDirty(this);
     }
-
-    [ContextMenu("Set prefab name")]
-    private void SetName()
-    {
-    }
-
 #endif
 }

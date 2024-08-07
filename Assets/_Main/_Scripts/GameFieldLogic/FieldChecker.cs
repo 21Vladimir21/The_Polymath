@@ -7,14 +7,14 @@ namespace _Main._Scripts.GameFieldLogic
 {
     public class FieldChecker
     {
-        private readonly GameFieldSell[,] _grid;
+        private readonly GameFieldCell[,] _grid;
         
         private List<string> _words = new() //TODO: вынести от сюда нахуй 
         {
             "кам", "мак", "скам", "хуй", "смак",
         };
 
-        public FieldChecker(GameFieldSell[,] grid)
+        public FieldChecker(GameFieldCell[,] grid)
         {
             _grid = grid;
         }

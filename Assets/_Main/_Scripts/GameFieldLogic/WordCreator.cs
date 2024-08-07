@@ -5,9 +5,9 @@ namespace _Main._Scripts.GameFieldLogic
 {
     public class WordCreator
     {
-        private readonly GameFieldSell[,] _grid;
+        private readonly GameFieldCell[,] _grid;
 
-        public WordCreator(GameFieldSell[,] grid)
+        public WordCreator(GameFieldCell[,] grid)
         {
             _grid = grid;
         }
@@ -47,9 +47,10 @@ namespace _Main._Scripts.GameFieldLogic
         private Word BuildWordFromGridCells(bool checkFromHorizontal, Vector2 startIndex) //TODO: в WC
         {
             List<LetterTile> currentWordTiles = new();
-            var currentTile = _grid[(int)startIndex.x, (int)startIndex.y].CurrentTile;
 
-            if (currentTile != null) currentWordTiles.Add(currentTile);
+            int wordMultiplicationValue = 1;
+
+            CheckingGridTile(startIndex, currentWordTiles, ref wordMultiplicationValue);
 
             Vector2 index = startIndex;
             int cycleIndex = checkFromHorizontal ? (int)index.y : (int)index.x;
@@ -61,23 +62,33 @@ namespace _Main._Scripts.GameFieldLogic
 
             while (cycleIndex < _grid.GetLength(checkFromHorizontal ? 0 : 1) - 1)
             {
-                if (_grid[(int)index.x, (int)index.y]?.IsBusy == true)
-                {
-                    currentTile = _grid[(int)index.x, (int)index.y].CurrentTile;
-                    if (currentTile != null) currentWordTiles.Add(currentTile);
-                }
+                var gameFieldSell = _grid[(int)index.x, (int)index.y];
+                if (gameFieldSell.IsBusy)
+                    CheckingGridTile(index, currentWordTiles, ref wordMultiplicationValue);
                 else
                     break;
 
-                if (checkFromHorizontal)
-                    index.y++;
-                else
-                    index.x++;
+                if (checkFromHorizontal) index.y++;
+                else index.x++;
 
                 cycleIndex++;
             }
 
-            return currentWordTiles.Count > 1 ? new Word(currentWordTiles) : null;
+            return currentWordTiles.Count > 1 ? new Word(currentWordTiles, wordMultiplicationValue) : null;
+        }
+
+        private void CheckingGridTile(Vector2 startIndex, List<LetterTile> currentWordTiles,
+            ref int wordMultiplicationValue)
+        {
+            var gameFieldSell = _grid[(int)startIndex.x, (int)startIndex.y];
+            var currentTile = gameFieldSell.CurrentTile;
+
+            if (currentTile == null) return;
+            if (gameFieldSell.MultiplicationBonus > 1 && !gameFieldSell.IsWordMultiplication)
+                currentTile.SetMultiplicationValue(gameFieldSell.MultiplicationBonus);
+            else
+                wordMultiplicationValue *= gameFieldSell.MultiplicationBonus;
+            currentWordTiles.Add(currentTile);
         }
     }
 }
