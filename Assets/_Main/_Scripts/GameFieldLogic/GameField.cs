@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using _Main._Scripts.DictionaryLogic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -9,24 +10,22 @@ namespace _Main._Scripts.GameFieldLogic
     public class GameField : MonoBehaviour
     {
         [field: SerializeField] public NewLettersPanel NewLettersPanel { get; private set; }
-        
+
         [field: SerializeField] private GameFieldCell[] cells;
         [SerializeField] private List<LetterTile> letterTiles;
+
+        private SortingDictionary _dictionary;
 
         private GameFieldCell[,] _grid;
         private DragAndDrop _dragAndDrop;
         private FieldChecker _fieldChecker;
         private WordCreator _wordCreator;
 
-        private List<string> _words = new()
-        {
-            "кам", "кама", "мак", "мака", "скам", "хуй", "смак", "хуйа", "акам", "амак", "ахуй",
-        };
-
         private List<string> _createdWords = new();
 
-        public void Init()
+        public void Init(SortingDictionary dictionary)
         {
+            _dictionary = dictionary;
             InitializeGrid();
             _fieldChecker = new FieldChecker(_grid);
             _wordCreator = new WordCreator(_grid);
@@ -48,8 +47,7 @@ namespace _Main._Scripts.GameFieldLogic
         //TODO: тестовая штука , надо доработать и возможно убрать отсюда когда будет сделана инициализация игры 
         public void CreateRandomWord()
         {
-            var randomWordIndex = Random.Range(0, _words.Count);
-            var randomWord = _words[randomWordIndex];
+            var randomWord = _dictionary.GetRandomWordWithLength(3);
             var parsedWord = randomWord.ToCharArray();
             if (parsedWord.Length > 3)
             {
@@ -92,7 +90,8 @@ namespace _Main._Scripts.GameFieldLogic
                     MarkTilesAsPartOfWord(word.Tiles);
                     _createdWords.Add(word.StringWord);
                     //TODO:Хрень для дебага
-                    Debug.Log($"Created word: |{word.StringWord}|, word points with multiplication - |{word.WordPoint}|");
+                    Debug.Log(
+                        $"Created word: |{word.StringWord}|, word points with multiplication - |{word.WordPoint}|");
                 }
                 else if (word.StringWord.Length > 1)
                     Debug.Log($"Word |{word.StringWord}| not found or set not right");
@@ -102,7 +101,7 @@ namespace _Main._Scripts.GameFieldLogic
         private bool IsWordValid(Word word) //TODO: в FC
         {
             bool wordFits = word.Tiles.Any(tile => tile.InRightWord);
-            return _words.Any(w => string.Equals(w, word.StringWord, StringComparison.OrdinalIgnoreCase)) &&
+            return !string.IsNullOrEmpty(_dictionary.TryFoundWord(word.StringWord).Word) &&
                    wordFits;
         }
 

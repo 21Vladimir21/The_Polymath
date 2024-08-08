@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using _Main._Scripts.DictionaryLogic;
 using _Main._Scripts.GameFieldLogic;
 using _Main._Scripts.LetterPooLogic;
 using UnityEngine;
@@ -11,12 +12,14 @@ namespace _Main._Scripts._GameStateMachine.States
     {
         private readonly GameField _gameField;
         private readonly LettersPool _lettersPool;
+        private readonly SortingDictionary _dictionary;
 
-        public PlayerStepState(GameField gameField, LettersPool lettersPool)
+        public PlayerStepState(GameField gameField, LettersPool lettersPool,SortingDictionary dictionary)
         {
             _gameField = gameField;
             _lettersPool = lettersPool;
-            _gameField.Init();
+            _dictionary = dictionary;
+            _gameField.Init(dictionary);
         }
 
         public void Enter()

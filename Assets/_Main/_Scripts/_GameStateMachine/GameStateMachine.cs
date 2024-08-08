@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using _Main._Scripts._GameStateMachine.States;
+using _Main._Scripts.DictionaryLogic;
 using _Main._Scripts.GameFieldLogic;
 using _Main._Scripts.LetterPooLogic;
 
@@ -10,18 +11,20 @@ namespace _Main._Scripts._GameStateMachine
     {
         private readonly GameField _gameField;
         private readonly LettersPool _lettersPool;
+        private readonly SortingDictionary _dictionary;
         private readonly List<IState> _states;
         private IState _currentState;
 
 
-        public GameStateMachine(GameField gameField, LettersPool lettersPool)
+        public GameStateMachine(GameField gameField, LettersPool lettersPool,SortingDictionary dictionary)
         {
             _gameField = gameField;
             _lettersPool = lettersPool;
+            _dictionary = dictionary;
 
             _states = new List<IState>
             {
-                new PlayerStepState(gameField, lettersPool)
+                new PlayerStepState(gameField, lettersPool,dictionary)
             };
 
             _currentState = _states[0];

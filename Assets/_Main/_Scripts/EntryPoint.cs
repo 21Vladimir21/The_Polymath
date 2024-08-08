@@ -1,4 +1,5 @@
 using _Main._Scripts._GameStateMachine;
+using _Main._Scripts.DictionaryLogic;
 using _Main._Scripts.GameFieldLogic;
 using _Main._Scripts.LetterPooLogic;
 using UnityEngine;
@@ -9,6 +10,8 @@ namespace _Main._Scripts
     {
         [SerializeField] private GameField gameField;
         [SerializeField] private Transform lettersParent;
+        [SerializeField] private SortingDictionary dictionary;
+        
         
         private GameStateMachine _gameStateMachine;
         private LettersPool _lettersPool;
@@ -20,7 +23,9 @@ namespace _Main._Scripts
         private void Awake()
         {
             _lettersPool = new LettersPool(_lettersPoolConfig, lettersParent);
-            _gameStateMachine = new GameStateMachine(gameField,_lettersPool);
+            _gameStateMachine = new GameStateMachine(gameField,_lettersPool,dictionary);
+
+
         }
 
         private void Update()

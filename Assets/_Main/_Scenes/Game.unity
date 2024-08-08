@@ -16715,6 +16715,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameField: {fileID: 571587236}
   lettersParent: {fileID: 283689818}
+  dictionary: {fileID: 11400000, guid: 5f611e18c07697a46bbe64412ff24095, type: 2}
   _lettersPoolConfig: {fileID: 11400000, guid: af4f017b537b7d440b7fad799a848883, type: 2}
 --- !u!4 &1296094038
 Transform:
