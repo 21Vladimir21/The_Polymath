@@ -12,19 +12,28 @@ namespace _Main._Scripts._GameStateMachine
         private readonly GameField _gameField;
         private readonly LettersPool _lettersPool;
         private readonly SortingDictionary _dictionary;
+        private readonly DragAndDrop _dragAndDrop;
         private readonly List<IState> _states;
         private IState _currentState;
+        private readonly FieldChecker _fieldChecker;
+        private readonly WordCreator _wordCreator;
 
 
-        public GameStateMachine(GameField gameField, LettersPool lettersPool,SortingDictionary dictionary)
+        public GameStateMachine(GameField gameField, LettersPool lettersPool, SortingDictionary dictionary,
+            DragAndDrop dragAndDrop)
         {
             _gameField = gameField;
             _lettersPool = lettersPool;
             _dictionary = dictionary;
-
+            _dragAndDrop = dragAndDrop;
+            _gameField.Init(dictionary, _lettersPool);
+            _fieldChecker = _gameField.FieldChecker;
+            _wordCreator = _gameField.WordCreator;
             _states = new List<IState>
             {
-                new PlayerStepState(gameField, lettersPool,dictionary)
+                new PlayerStepState(this, gameField, lettersPool, dictionary, dragAndDrop),
+                new OpponentStep(this, _fieldChecker,_wordCreator, gameField,dictionary,_lettersPool),
+                new MainMenuState()
             };
 
             _currentState = _states[0];

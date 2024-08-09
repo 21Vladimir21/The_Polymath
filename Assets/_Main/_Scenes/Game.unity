@@ -16713,10 +16713,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6481a909e8f94b069b28c6fb9301f5d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dragAndDrop: {fileID: 388685028}
   gameField: {fileID: 571587236}
   lettersParent: {fileID: 283689818}
   dictionary: {fileID: 11400000, guid: 5f611e18c07697a46bbe64412ff24095, type: 2}
-  _lettersPoolConfig: {fileID: 11400000, guid: af4f017b537b7d440b7fad799a848883, type: 2}
+  _lettersPoolConfig: {fileID: 11400000, guid: 4f2f0a481a6bac540a961b880bbcbb93, type: 2}
 --- !u!4 &1296094038
 Transform:
   m_ObjectHideFlags: 0

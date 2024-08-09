@@ -12,7 +12,7 @@ namespace _Main._Scripts.GameFieldLogic
             _grid = grid;
         }
 
-        public List<Word> CreateAWords(Vector2 index, CheckingFieldDirection checkDirection) //TODO: в WC
+        public List<Word> CreateAWords(Vector2 index, CheckingFieldDirection checkDirection)
         {
             List<Word> createdWords = new();
             Word horizontalWordResult;

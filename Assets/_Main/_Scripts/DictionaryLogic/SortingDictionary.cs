@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using _Main._Scripts.GameFieldLogic;
 using Newtonsoft.Json;
+using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -13,6 +16,28 @@ namespace _Main._Scripts.DictionaryLogic
         [SerializeField] private TextAsset words;
 
         [SerializeField] private List<WordLengthDictionaryHolder> dictionaryHolders = new();
+
+
+        public List<string> GetWordsFromFirstLetterAndLength(Letters firstLetter, int length)
+        {
+            List<string> foundWords = new();
+            foreach (var dictionaryHolder in dictionaryHolders)
+            {
+                if (dictionaryHolder.WordLength != length) continue;
+                if (length > dictionaryHolder.WordLength) break;
+
+                foreach (var wordHolder in dictionaryHolder.FirstLetterWordHolders)
+                {
+                    if (wordHolder.FirstLetter == firstLetter)
+                    {
+                        foundWords.AddRange(wordHolder.Words.Select(x => x.Word));
+                        break;
+                    }
+                }
+            }
+
+            return foundWords;
+        }
 
         public string GetWordDescription(string word)
         {

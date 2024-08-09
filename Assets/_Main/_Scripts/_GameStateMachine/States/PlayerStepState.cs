@@ -10,26 +10,33 @@ namespace _Main._Scripts._GameStateMachine.States
 {
     public class PlayerStepState : IState
     {
+        private readonly IStateSwitcher _stateSwitcher;
         private readonly GameField _gameField;
         private readonly LettersPool _lettersPool;
         private readonly SortingDictionary _dictionary;
+        private readonly DragAndDrop _dragAndDrop;
 
-        public PlayerStepState(GameField gameField, LettersPool lettersPool,SortingDictionary dictionary)
+        public PlayerStepState(IStateSwitcher stateSwitcher,GameField gameField, LettersPool lettersPool,SortingDictionary dictionary,DragAndDrop dragAndDrop)
         {
+            _stateSwitcher = stateSwitcher;
             _gameField = gameField;
             _lettersPool = lettersPool;
             _dictionary = dictionary;
-            _gameField.Init(dictionary);
+            _dragAndDrop = dragAndDrop;
+        
         }
 
         public void Enter()
         {
+            _dragAndDrop.CanDrag = true;
             _gameField.CreateRandomWord();
             SetNewLettersInPanel();
         }
 
         public void Exit()
         {
+            _dragAndDrop.CanDrag = false;
+            SetNewLettersInPanel();
         }
 
         public void Update()
@@ -38,6 +45,12 @@ namespace _Main._Scripts._GameStateMachine.States
             {
                 _gameField.CheckingGridForCorrectnessWords();
             }
+
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                _stateSwitcher.SwitchState<OpponentStep>();
+            }
+            
         }
 
         private List<Letters> CreateRandomLettersList(int count)

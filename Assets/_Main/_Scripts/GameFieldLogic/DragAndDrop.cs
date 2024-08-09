@@ -15,8 +15,12 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     private bool _isDragged;
 
+    public bool CanDrag { get; set; }
+
     public void OnPointerDown(PointerEventData eventData)
     {
+        if (CanDrag == false) return;
+        
         if (eventData.pointerCurrentRaycast.gameObject.TryGetComponent(out TileCell cell))
             if (cell.IsBusy && cell.CurrentTile.CanMove)
                 StartDrag(cell);

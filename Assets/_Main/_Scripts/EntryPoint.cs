@@ -8,6 +8,8 @@ namespace _Main._Scripts
 {
     public class EntryPoint : MonoBehaviour
     {
+        
+        [SerializeField] private DragAndDrop dragAndDrop;
         [SerializeField] private GameField gameField;
         [SerializeField] private Transform lettersParent;
         [SerializeField] private SortingDictionary dictionary;
@@ -23,7 +25,7 @@ namespace _Main._Scripts
         private void Awake()
         {
             _lettersPool = new LettersPool(_lettersPoolConfig, lettersParent);
-            _gameStateMachine = new GameStateMachine(gameField,_lettersPool,dictionary);
+            _gameStateMachine = new GameStateMachine(gameField,_lettersPool,dictionary,dragAndDrop);
 
 
         }

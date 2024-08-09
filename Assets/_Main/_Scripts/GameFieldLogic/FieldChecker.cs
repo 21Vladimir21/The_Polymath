@@ -8,11 +8,6 @@ namespace _Main._Scripts.GameFieldLogic
     public class FieldChecker
     {
         private readonly GameFieldCell[,] _grid;
-        
-        private List<string> _words = new() //TODO: вынести от сюда нахуй 
-        {
-            "кам", "мак", "скам", "хуй", "смак",
-        };
 
         public FieldChecker(GameFieldCell[,] grid)
         {
@@ -65,7 +60,94 @@ namespace _Main._Scripts.GameFieldLogic
 
             return indexes;
         }
+
+        public FreeSpaceInfo FindNeedsCellsForOpponent()
+        {
+            for (int i = 0; i < _grid.GetLength(0); i++)
+            {
+                for (int j = 0; j < _grid.GetLength(1); j++)
+                {
+                    if (!_grid[i, j].IsBusy) continue;
+
+                    var freeCells = CheckFreeCellsFromStartCell(i, j);
+                    if (freeCells.x > 1)
+                    {
+                        return new FreeSpaceInfo(new Vector2(i, j), CheckingFieldDirection.Vertical,
+                            (int)freeCells.x + 1);
+                    }
+
+                    if (freeCells.y > 1)
+                    {
+                        return new FreeSpaceInfo(new Vector2(i, j), CheckingFieldDirection.Horizontal,
+                            (int)freeCells.y + 1);
+                    }
+                }
+            }
+
+            return default;
+        }
+
+        public Vector2 CheckFreeCellsFromStartCell(int x, int y)
+        {
+            var xCycleCount = x;
+            var yCycleCount = y;
+
+
+            bool isTopEdge = x == 0;
+            bool isLeftEdge = y == 0;
+
+
+            if (!isTopEdge && _grid[x - 1, y].IsBusy) return default;
+            for (int i = x + 1; i < _grid.GetLength(1); i++)
+            {
+                isLeftEdge = y == 0;
+                bool isRightEdge = y == _grid.GetLength(0) - 1;
+                bool isBottomEdge = i == _grid.GetLength(1) - 1;
+
+                if (_grid[i, y].IsBusy) break;
+                if (!isBottomEdge && _grid[i, y + 1].IsBusy) break;
+                if (!isRightEdge && _grid[i, y + 1].IsBusy) break;
+                if (!isLeftEdge && _grid[i, y - 1].IsBusy) break;
+
+                xCycleCount++;
+            }
+
+            if (!isLeftEdge && _grid[x, y - 1].IsBusy) return default;
+            for (int i = y + 1; i < _grid.GetLength(0); i++)
+            {
+                isTopEdge = x == 0;
+                bool isBottomEdge = x == _grid.GetLength(1) - 1;
+
+                bool isRightEdge = i == _grid.GetLength(0) - 1;
+
+                if (_grid[x, i].IsBusy) break;
+                if (!isRightEdge && _grid[x, i + 1].IsBusy) break;
+                if (!isBottomEdge && _grid[x + 1, i].IsBusy) break;
+                if (!isTopEdge && _grid[x - 1, i].IsBusy) break;
+
+                yCycleCount++;
+            }
+
+            Debug.Log(
+                $"от буквы {_grid[x, y].CurrentTile.Letter.ToString()} в направлении вних свободно {xCycleCount - x} ячеек , в направлении вправо {yCycleCount - y}");
+            return new Vector2(xCycleCount - x, yCycleCount - y);
+        }
     }
+
+    public struct FreeSpaceInfo
+    {
+        public Vector2 Coordinates;
+        public CheckingFieldDirection Direction;
+        public int Length;
+
+        public FreeSpaceInfo(Vector2 coordinates, CheckingFieldDirection direction, int length)
+        {
+            Coordinates = coordinates;
+            Direction = direction;
+            Length = length;
+        }
+    }
+
     public enum CheckingFieldDirection
     {
         Horizontal,
