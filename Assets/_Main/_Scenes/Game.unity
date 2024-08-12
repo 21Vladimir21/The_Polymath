@@ -5683,7 +5683,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bfaaab12d3d446bb6fb73466a3a7994, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <NewLettersPanel>k__BackingField: {fileID: 1486859192}
   cells:
   - {fileID: 1144187405}
   - {fileID: 2081965393}
@@ -5910,40 +5909,6 @@ MonoBehaviour:
   - {fileID: 592439353}
   - {fileID: 42777288}
   - {fileID: 1586619062}
-  letterTiles:
-  - {fileID: 4739130988131852956, guid: e5507f1c6feadcf42bead0fae587e512, type: 3}
-  - {fileID: 8197863872722855875, guid: 264604f1e99921744a1fd20173c5aa32, type: 3}
-  - {fileID: 2160314041896178044, guid: e4f2c6a81f2a4b24881a987323c17f2a, type: 3}
-  - {fileID: 875366238618523909, guid: 9c6d83cdac829dc44a6f3139ff800f98, type: 3}
-  - {fileID: 7256464180299534519, guid: 1243db1b5338b8a47ab37b24f1f03049, type: 3}
-  - {fileID: 2933276954376653752, guid: 6201f3560e632a64593403488d23f619, type: 3}
-  - {fileID: 2456883254380972111, guid: 7a8d9ca64bc1c184db3f28cf14380d27, type: 3}
-  - {fileID: 1721263879999071777, guid: f42d85d35702b3a4c8cb4d0a3cebcc0e, type: 3}
-  - {fileID: 3908549411773082387, guid: fd17314c86f42d4418706a66ca8aa4e7, type: 3}
-  - {fileID: 8764954106628800444, guid: 61be7c3c557163a449fd4ef3f898f8cd, type: 3}
-  - {fileID: 1000595575950136720, guid: fece4a570a1bc4a489063e27689a2f85, type: 3}
-  - {fileID: 621791083415868814, guid: 60b9ed82498503940b07e9685a267be0, type: 3}
-  - {fileID: 8269570169994539383, guid: b14fd58025e80c646ab654bc4e4ae894, type: 3}
-  - {fileID: 4042404713923544863, guid: 92431aa86442ba149ab7545bc0ac2ccb, type: 3}
-  - {fileID: 9137381497971652729, guid: b30466a3da2da0848b5fc47104014a9b, type: 3}
-  - {fileID: 4867229660206656578, guid: 0b797a33fe875ee4081d0f8aa10e2106, type: 3}
-  - {fileID: 1937510825693092900, guid: b4c28af2a93f5a94ba16b0e903b2ed30, type: 3}
-  - {fileID: 8938399600858179525, guid: 9f4b4750ccb31ed498ff837d495acd53, type: 3}
-  - {fileID: 5266121066202168260, guid: 49e9fc2540bc13d45af747e1402fcad4, type: 3}
-  - {fileID: 583723366876449593, guid: 5dd05097f40a4c54fa396d10fa6b2af2, type: 3}
-  - {fileID: 7057088927125996995, guid: 0f2baf7a6a6ae0e4c9560775e58f7553, type: 3}
-  - {fileID: 2261311966482083885, guid: 47602d9684314784fb6000622de8f492, type: 3}
-  - {fileID: 2974751784731144578, guid: 6e26e99aae6c3c84ebeb39b9bed6e10c, type: 3}
-  - {fileID: 3058120483549252544, guid: ab04e0ecd1f71b045a89176a749a75c8, type: 3}
-  - {fileID: 3508352881203132456, guid: f665a06d8fe4f9544bd190c8d216083d, type: 3}
-  - {fileID: 9112778228512949472, guid: 872ecf9fefef6fe4598ea14337491cac, type: 3}
-  - {fileID: 1716455164387622260, guid: a6d9e102fb2b5da41b1f8cf9d2bf1a85, type: 3}
-  - {fileID: 9218027785892668487, guid: 6db83f0f01d95e942b482ec610802990, type: 3}
-  - {fileID: 2978153264593530979, guid: c08a8e6a5914ede47b33cf43e9db61d3, type: 3}
-  - {fileID: 7338780231190376332, guid: 3a78da51c8485584b89d4d8f1eaa3faa, type: 3}
-  - {fileID: 8831902680437064348, guid: a15b591730c253c4aadb9e94b62bd526, type: 3}
-  - {fileID: 7885934572504113803, guid: 7e4fc474c4ee98f4da813be608cb1084, type: 3}
-  - {fileID: 3015792179125847905, guid: fbaa0edf19d443549a1634acf16728a6, type: 3}
 --- !u!114 &571587237
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16714,8 +16679,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   dragAndDrop: {fileID: 388685028}
-  gameField: {fileID: 571587236}
+  playingField: {fileID: 571587236}
   lettersParent: {fileID: 283689818}
+  newLettersPanel: {fileID: 1486859192}
   dictionary: {fileID: 11400000, guid: 5f611e18c07697a46bbe64412ff24095, type: 2}
   _lettersPoolConfig: {fileID: 11400000, guid: 4f2f0a481a6bac540a961b880bbcbb93, type: 2}
 --- !u!4 &1296094038
@@ -19220,7 +19186,7 @@ GameObject:
   - component: {fileID: 1486859191}
   - component: {fileID: 1486859190}
   m_Layer: 5
-  m_Name: NewCharsPanel
+  m_Name: NewLettersPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

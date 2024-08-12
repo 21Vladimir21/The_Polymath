@@ -5,9 +5,9 @@ namespace _Main._Scripts.GameFieldLogic
 {
     public class WordCreator
     {
-        private readonly GameFieldCell[,] _grid;
+        private readonly PlayingFieldCell[,] _grid;
 
-        public WordCreator(GameFieldCell[,] grid)
+        public WordCreator(PlayingFieldCell[,] grid)
         {
             _grid = grid;
         }

@@ -3,6 +3,7 @@ using _Main._Scripts.DictionaryLogic;
 using _Main._Scripts.GameFieldLogic;
 using _Main._Scripts.LetterPooLogic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace _Main._Scripts
 {
@@ -10,10 +11,11 @@ namespace _Main._Scripts
     {
         
         [SerializeField] private DragAndDrop dragAndDrop;
-        [SerializeField] private GameField gameField;
+        [FormerlySerializedAs("gameField")] [SerializeField] private PlayingField playingField;
         [SerializeField] private Transform lettersParent;
+        [SerializeField] private NewLettersPanel newLettersPanel;
         [SerializeField] private SortingDictionary dictionary;
-        
+
         
         private GameStateMachine _gameStateMachine;
         private LettersPool _lettersPool;
@@ -25,7 +27,7 @@ namespace _Main._Scripts
         private void Awake()
         {
             _lettersPool = new LettersPool(_lettersPoolConfig, lettersParent);
-            _gameStateMachine = new GameStateMachine(gameField,_lettersPool,dictionary,dragAndDrop);
+            _gameStateMachine = new GameStateMachine(playingField,newLettersPanel,_lettersPool,dictionary,dragAndDrop);
 
 
         }

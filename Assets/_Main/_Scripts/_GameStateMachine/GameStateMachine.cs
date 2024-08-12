@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using _Main._Scripts._GameStateMachine.States;
 using _Main._Scripts.DictionaryLogic;
+using _Main._Scripts.GameDatas;
 using _Main._Scripts.GameFieldLogic;
 using _Main._Scripts.LetterPooLogic;
 
@@ -9,30 +10,22 @@ namespace _Main._Scripts._GameStateMachine
 {
     public class GameStateMachine : IStateSwitcher
     {
-        private readonly GameField _gameField;
-        private readonly LettersPool _lettersPool;
-        private readonly SortingDictionary _dictionary;
-        private readonly DragAndDrop _dragAndDrop;
         private readonly List<IState> _states;
         private IState _currentState;
-        private readonly FieldChecker _fieldChecker;
-        private readonly WordCreator _wordCreator;
+        private readonly GameData _gameData;
 
 
-        public GameStateMachine(GameField gameField, LettersPool lettersPool, SortingDictionary dictionary,
-            DragAndDrop dragAndDrop)
+        public GameStateMachine(PlayingField playingField, NewLettersPanel newLettersPanel, LettersPool lettersPool,
+            SortingDictionary dictionary, DragAndDrop dragAndDrop)
         {
-            _gameField = gameField;
-            _lettersPool = lettersPool;
-            _dictionary = dictionary;
-            _dragAndDrop = dragAndDrop;
-            _gameField.Init(dictionary, _lettersPool);
-            _fieldChecker = _gameField.FieldChecker;
-            _wordCreator = _gameField.WordCreator;
+            playingField.InitializeGrid();
+            _gameData = new GameData();
             _states = new List<IState>
             {
-                new PlayerStepState(this, gameField, lettersPool, dictionary, dragAndDrop),
-                new OpponentStep(this, _fieldChecker,_wordCreator, gameField,dictionary,_lettersPool),
+                new InitState(this, dictionary, playingField, lettersPool, _gameData),
+                new PlayerStepState(this, playingField, newLettersPanel, lettersPool, dictionary, dragAndDrop,
+                    _gameData),
+                new PCStepState(this, playingField, dictionary, lettersPool, _gameData),
                 new MainMenuState()
             };
 

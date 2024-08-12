@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using _Main._Scripts.DictionaryLogic;
+using _Main._Scripts.GameDatas;
 using _Main._Scripts.GameFieldLogic;
 using _Main._Scripts.LetterPooLogic;
 using UnityEngine;
@@ -11,25 +13,35 @@ namespace _Main._Scripts._GameStateMachine.States
     public class PlayerStepState : IState
     {
         private readonly IStateSwitcher _stateSwitcher;
-        private readonly GameField _gameField;
+        private readonly PlayingField _playingField;
+        private readonly NewLettersPanel _newLettersPanel;
         private readonly LettersPool _lettersPool;
         private readonly SortingDictionary _dictionary;
         private readonly DragAndDrop _dragAndDrop;
+        private readonly GameData _gameData;
+        private readonly StartWordCellsFinder _startWordCellsFinder;
+        private readonly WordCreator _wordCreator;
 
-        public PlayerStepState(IStateSwitcher stateSwitcher,GameField gameField, LettersPool lettersPool,SortingDictionary dictionary,DragAndDrop dragAndDrop)
+        private readonly List<Word> _createdWords = new();
+
+        public PlayerStepState(IStateSwitcher stateSwitcher, PlayingField playingField, NewLettersPanel newLettersPanel,
+            LettersPool lettersPool, SortingDictionary dictionary, DragAndDrop dragAndDrop, GameData gameData)
         {
             _stateSwitcher = stateSwitcher;
-            _gameField = gameField;
+            _playingField = playingField;
+            _newLettersPanel = newLettersPanel;
             _lettersPool = lettersPool;
             _dictionary = dictionary;
             _dragAndDrop = dragAndDrop;
-        
+            _gameData = gameData;
+
+            _startWordCellsFinder = new StartWordCellsFinder(_playingField.Grid);
+            _wordCreator = new WordCreator(_playingField.Grid);
         }
 
         public void Enter()
         {
             _dragAndDrop.CanDrag = true;
-            _gameField.CreateRandomWord();
             SetNewLettersInPanel();
         }
 
@@ -43,14 +55,13 @@ namespace _Main._Scripts._GameStateMachine.States
         {
             if (Input.GetKeyDown(KeyCode.A))
             {
-                _gameField.CheckingGridForCorrectnessWords();
+                CheckingGridForCorrectnessWords();
             }
 
             if (Input.GetKeyDown(KeyCode.R))
             {
-                _stateSwitcher.SwitchState<OpponentStep>();
+                _stateSwitcher.SwitchState<PCStepState>();
             }
-            
         }
 
         private List<Letters> CreateRandomLettersList(int count)
@@ -69,13 +80,59 @@ namespace _Main._Scripts._GameStateMachine.States
 
         private void SetNewLettersInPanel()
         {
-            var freeCells = _gameField.NewLettersPanel.GetFreeCells();
+            var freeCells = _newLettersPanel.GetFreeCells();
             var randomLetters = CreateRandomLettersList(freeCells.Count);
             for (int i = 0; i < freeCells.Count; i++)
             {
                 var tile = _lettersPool.GetTile(randomLetters[i]);
                 freeCells[i].AddTile(tile);
             }
+        }
+
+        private void CheckingGridForCorrectnessWords()
+        {
+            var startWordsKeyValuePairs = _startWordCellsFinder.FindStartCellsIndexes();
+            _createdWords.Clear();
+
+            List<Word> words = new();
+            foreach (var keyValuePair in startWordsKeyValuePairs)
+                words.AddRange(_wordCreator.CreateAWords(keyValuePair.Key, keyValuePair.Value));
+
+            foreach (var word in words)
+            {
+                if (IsWordValid(word))
+                {
+                    _playingField.MarkTilesAsPartOfRightWord(word.Tiles);
+                    _createdWords.Add(word);
+                    //TODO:Хрень для дебага
+                    Debug.Log(
+                        $"Created word: |{word.StringWord}|, word points with multiplication - |{word.WordPoint}|");
+                }
+                else if (word.StringWord.Length > 1)
+                    Debug.Log($"Word |{word.StringWord}| not found or set not right");
+            }
+
+            var pointPerStep = CalculatePointsPointPerStep();
+            Debug.Log($"Points per step - {pointPerStep}");
+        }
+
+        private bool IsWordValid(Word word) //TODO: в FC
+        {
+            bool isNewWordInField = true;
+            foreach (var createdWord in _gameData.CreatedWords)
+                if (string.Equals(createdWord, word.StringWord,StringComparison.OrdinalIgnoreCase))
+                    isNewWordInField = false;
+
+            bool wordFits = word.Tiles.Any(tile => tile.InRightWord);
+            bool wordExists = !string.IsNullOrEmpty(_dictionary.TryFoundWord(word.StringWord).Word);
+            return isNewWordInField && wordExists && wordFits;
+        }
+
+        private int CalculatePointsPointPerStep()
+        {
+            var pointPerStep = 0;
+            foreach (var word in _createdWords) pointPerStep += word.WordPoint;
+            return pointPerStep;
         }
     }
 }

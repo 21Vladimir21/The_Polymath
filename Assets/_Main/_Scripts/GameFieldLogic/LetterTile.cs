@@ -11,14 +11,13 @@ public class LetterTile : MonoBehaviour
     [SerializeField] private TMP_Text letterText;
     [SerializeField] private TMP_Text pointsText;
     [SerializeField] private RectTransform rectTransform;
-
+    private int _multiplierValue = 1;
 
     public bool InRightWord { get; private set; }
     public bool CanMove { get; private set; } = true;
     public string LetterString => Letter.ToString();
     public int Points => points * _multiplierValue;
     public RectTransform RectTransform => rectTransform;
-    private int _multiplierValue = 1;
 
     public void SetOnField()
     {
@@ -26,7 +25,7 @@ public class LetterTile : MonoBehaviour
         CanMove = false;
     }
 
-    public void SetInRightWord() => InRightWord = true;
+    public void MarkInRightWord() => InRightWord = true;
 
     public void ResetTile()
     {

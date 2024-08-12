@@ -36,7 +36,7 @@ namespace _Main._Scripts.DictionaryLogic
                 }
             }
 
-            return foundWords;
+            return foundWords.Count > 0 ? foundWords : null;
         }
 
         public string GetWordDescription(string word)
