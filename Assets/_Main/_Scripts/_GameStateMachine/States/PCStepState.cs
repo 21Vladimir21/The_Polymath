@@ -6,6 +6,7 @@ using _Main._Scripts.GameDatas;
 using _Main._Scripts.GameFieldLogic;
 using _Main._Scripts.LetterPooLogic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -28,10 +29,13 @@ namespace _Main._Scripts._GameStateMachine.States
             _dictionary = dictionary;
             _lettersPool = lettersPool;
             _gameData = gameData;
+            
+            var morph = new MorphAnalyzer();
         }
 
         public void Enter()
         {
+    
         }
 
         public void Exit()
@@ -42,53 +46,69 @@ namespace _Main._Scripts._GameStateMachine.States
         {
             if (Input.GetKeyDown(KeyCode.N))
             {
-                NewMethod();
+                CreateWordFromFirstLetter();
                 _stateSwitcher.SwitchState<PlayerStepState>();
             }
         }
 
-        private void NewMethod()
+        private void CreateWordFromFirstLetter()
         {
             var spaces = FindNeedsCellsForOpponent();
 
-            foreach (var space in spaces)
+            foreach (var space in spaces) // TODO: Добавить рандомный выьор первой точки , что бы бот не ставил в предсказуемое место 
             {
                 var firstCell = _playingField.Grid[space.Coordinates.x, space.Coordinates.y];
                 if (space.Equals(default(FreeSpaceInfo)))
                     return;
 
-                List<string> words = new();
+                List<LetterTile> foundedTiles = new();
+                bool impossibleCreateWord = false;
                 for (int i = 0; i < space.Length; i++)
                 {
                     int randomWordLength = Random.Range(2, space.Length);
-                    words = _dictionary.GetWordsFromFirstLetterAndLength(firstCell.CurrentTile.Letter,
+                    var words = _dictionary.GetWordsFromFirstLetterAndLength(firstCell.CurrentTile.Letter,
                         randomWordLength);
-                    if (words != null)
-                        break;
-                }
-                //TODO:Написал какуе-то хуету, надо переделат 
+                    if (words == null)
+                    {
+                        impossibleCreateWord = true;
+                        continue;
+                    }
 
-                if (words == null)
+                    var word = words[Random.Range(0, words.Count)];
+                    var charArray = word.ToList();
+
+                    for (int j = 1; j < charArray.Count; j++)
+                    {
+                        var letter = charArray[j].ToString().ToUpper();
+                        var enumLetter = Enum.Parse<Letters>(letter);
+                        var tile = _lettersPool.GetTile(enumLetter);
+                        if (tile)
+                            foundedTiles.Add(tile);
+                        else
+                        {
+                            impossibleCreateWord = true;
+                            break;
+                        } 
+
+                        impossibleCreateWord = false;
+                    }
+
+                    break;
+                }
+
+                if (impossibleCreateWord)
                 {
-                    Debug.Log($"Word with max length{space.Length} not found");
+                    foreach (var tile in foundedTiles) _lettersPool.ReturnTile(tile);
+                    Debug.Log($"impossible create word");
                     continue;
                 }
 
+                var startIndex = space.Direction == CheckingFieldDirection.Horizontal
+                    ? space.Coordinates.y + 1
+                    : space.Coordinates.x + 1;
 
-                var word = words[Random.Range(0, words.Count)];
-                var charArray = word.ToList();
-
-                var startIndex = 0;
-                if (space.Direction == CheckingFieldDirection.Horizontal)
-                    startIndex = space.Coordinates.y + 1;
-                else if (space.Direction == CheckingFieldDirection.Vertical)
-                    startIndex = space.Coordinates.x + 1;
-
-                for (int i = 1; i < charArray.Count; i++)
+                foreach (var tile in foundedTiles)
                 {
-                    var letter = charArray[i].ToString().ToUpper();
-                    var enumLetter = Enum.Parse<Letters>(letter);
-                    var tile = _lettersPool.GetTile(enumLetter);
                     if (space.Direction == CheckingFieldDirection.Horizontal)
                         _playingField.Grid[space.Coordinates.x, startIndex].AddTile(tile);
                     else if (space.Direction == CheckingFieldDirection.Vertical)
