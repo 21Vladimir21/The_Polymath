@@ -60,21 +60,20 @@ namespace _Main._Scripts.DictionaryLogic
             return foundedWords;
         }
 
-        public List<DictionaryWord> GetWordsFromLetter(char letter, int indexInWord = 0)
+        public List<DictionaryWord> GetWordsWithLetterAtPosition(string letter, int indexInWord = 0)
         {
             List<DictionaryWord> foundedWords = new();
             foreach (var holder in dictionaryHolders)
             {
-                if (holder.WordLength >= 2)
+                foreach (var letterWordHolder in holder.FirstLetterWordHolders)
                 {
-                    foreach (var letterWordHolder in holder.FirstLetterWordHolders)
-                    {
-                        foreach (var dictionaryWord in letterWordHolder.Words)
+                    foreach (var dictionaryWord in letterWordHolder.Words)
 
-                            if (string.Equals(dictionaryWord.Word[indexInWord].ToString(),
-                                    letter.ToString(), StringComparison.OrdinalIgnoreCase)){}
-                                foundedWords.Add(dictionaryWord);
-                    }
+                        if (string.Equals(dictionaryWord.Word[indexInWord].ToString(),
+                                letter, StringComparison.OrdinalIgnoreCase))
+                        {
+                            foundedWords.Add(dictionaryWord);
+                        }
                 }
             }
 

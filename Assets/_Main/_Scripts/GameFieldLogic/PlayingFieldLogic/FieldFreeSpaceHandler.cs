@@ -1,13 +1,15 @@
 using System.Collections.Generic;
 using _Main._Scripts._GameStateMachine.States;
+using _Main._Scripts.GameDatas;
 using UnityEngine;
+
 
 namespace _Main._Scripts.GameFieldLogic
 {
     public class FieldFreeSpaceHandler
     {
         private readonly PlayingField _playingField;
-        private GameDatas _gameData;
+        private GameData _gameData;
 
         public FieldFreeSpaceHandler(PlayingField playingField)
         {
@@ -15,34 +17,36 @@ namespace _Main._Scripts.GameFieldLogic
         }
 
 
-        public WordFreeCellsInfo CheckFreeCellsCountFromWordEdges(Word word)
+        public List<WordFreeCellsInfo> TryGetWordFreeSpaceInfo()
         {
-            if (word.IsHorizontal)
+            List<WordFreeCellsInfo> infos = new();
+            foreach (var word in _gameData.CreatedWords)
             {
-                var startCoords = word.GetWordStartCoordinates;
-                var endCoords = word.GetWordEndCoordinates;
+                if (word.IsHorizontal)
+                {
+                    var startCoords = word.GetWordStartCoordinates;
+                    var endCoords = word.GetWordEndCoordinates;
 
 
-                var rightFreeSpace = GetFreeHorizontalSpace(endCoords, true);
-                var leftFreeSpace = GetFreeHorizontalSpace(startCoords, false);
+                    var rightFreeSpace = GetFreeHorizontalSpace(endCoords, true);
+                    var leftFreeSpace = GetFreeHorizontalSpace(startCoords, false);
 
-                return
-                    new WordFreeCellsInfo(word, rightFreeSpace, leftFreeSpace);
+                    infos.Add(new WordFreeCellsInfo(word, rightFreeSpace, leftFreeSpace));
+                }
+                else
+                {
+                    var startCoords = word.GetWordStartCoordinates;
+                    var endCoords = word.GetWordEndCoordinates;
+
+
+                    var bottomFreeSpace = GetFreeVerticalSpace(endCoords, true);
+                    var upperFreeSpace = GetFreeVerticalSpace(startCoords, false);
+
+                    infos.Add(new WordFreeCellsInfo(word, upperFreeSpace, bottomFreeSpace));
+                }
             }
-            else
-            {
-                var startCoords = word.GetWordStartCoordinates;
-                var endCoords = word.GetWordEndCoordinates;
 
-
-                var bottomFreeSpace = GetFreeVerticalSpace(endCoords, true);
-                var upperFreeSpace = GetFreeVerticalSpace(startCoords, false);
-
-                return
-                    new WordFreeCellsInfo(word, upperFreeSpace, bottomFreeSpace);
-            }
-
-            return default;
+            return infos.Count <= 0 ? null : infos;
         }
 
 
@@ -115,21 +119,16 @@ namespace _Main._Scripts.GameFieldLogic
         }
 
 
-        private List<LetterFreeSpaceInfo> TryGetStartCells()
+        public List<LetterFreeSpaceInfo> TryGetStartCells()
         {
             List<LetterFreeSpaceInfo> freeSpaceInfos = new();
             foreach (var createdWord in _gameData.CreatedWords)
             {
                 foreach (var tile in createdWord.Tiles)
                 {
-                    var freeCells = CheckFreeCellsFromLetter(tile.TileCoordinates);
-                    if (freeCells.x > 1)
-                        freeSpaceInfos.Add(new LetterFreeSpaceInfo(tile.TileCoordinates,
-                            freeCells.x + 1));
-
-                    if (freeCells.y > 1)
-                        freeSpaceInfos.Add(new LetterFreeSpaceInfo(tile.TileCoordinates,
-                            freeCells.y + 1));
+                    var info = CheckFreeCellsFromLetter(tile);
+                    if (info.Equals(default(LetterFreeSpaceInfo))) continue;
+                    freeSpaceInfos.Add(info);
                 }
             }
 
@@ -139,25 +138,22 @@ namespace _Main._Scripts.GameFieldLogic
         private LetterFreeSpaceInfo CheckFreeCellsFromLetter(LetterTile tile)
         {
             var coords = tile.TileCoordinates;
-            var freeRightSpace = 0;
-            var freeLeftSpace = 0;
-            var freeUpperSpace = 0;
-            var freeBottomSpace = 0;
 
-            freeRightSpace = GetFreeHorizontalSpace(coords, true);
-            freeLeftSpace = GetFreeHorizontalSpace(coords, false);
+            var freeRightSpace = GetFreeHorizontalSpace(coords, true);
+            var freeLeftSpace = GetFreeHorizontalSpace(coords, false);
 
+            var freeUpperSpace = GetFreeVerticalSpace(coords, false);
+            var freeBottomSpace = GetFreeVerticalSpace(coords, true);
 
-            freeUpperSpace = GetFreeVerticalSpace(coords, false);
-            freeBottomSpace = GetFreeVerticalSpace(coords, true);
+            if (freeBottomSpace == 0 && freeUpperSpace == 0 && freeRightSpace == 0 && freeLeftSpace == 0)
+                return default;
 
-            if ((freeUpperSpace <= 0 || freeBottomSpace <= 0) && (freeLeftSpace > 0 || freeRightSpace > 0))
-                return new LetterFreeSpaceInfo(tile, freeLeftSpace, freeRightSpace,true);
-            if else(){}
+            int horizontalSpace = freeLeftSpace >= freeRightSpace ? freeLeftSpace : freeRightSpace;
+            int verticalSpace = freeBottomSpace >= freeUpperSpace ? freeBottomSpace : freeUpperSpace;
 
-                Debug.Log(
-                    $"от буквы {_playingField.Grid[coords.x, coords.y].CurrentTile.Letter.ToString()} в направлении вних свободно {freeSpaceX} ячеек , в направлении вправо {}");
-            return new Vector2Int(freeSpaceX,);
+            return horizontalSpace > verticalSpace
+                ? new LetterFreeSpaceInfo(tile, freeLeftSpace, freeRightSpace, true)
+                : new LetterFreeSpaceInfo(tile, freeUpperSpace, freeBottomSpace, false);
         }
     }
 }

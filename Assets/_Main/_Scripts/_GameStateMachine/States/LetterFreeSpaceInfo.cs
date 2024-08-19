@@ -1,3 +1,4 @@
+using System;
 using _Main._Scripts.GameFieldLogic;
 using UnityEngine;
 
@@ -8,11 +9,13 @@ namespace _Main._Scripts._GameStateMachine.States
         public readonly LetterTile LetterTile;
         public readonly int FreeCellsFromBeginningLetter;
         public readonly int FreeCellsFromEndLetter;
-        public LetterFreeSpaceInfo(LetterTile letterTile, int freeCellsFromBeginningLetter, int freeCellsFromEndLetter)
+        public bool IsHorizontal;
+        public LetterFreeSpaceInfo(LetterTile letterTile, int freeCellsFromBeginningLetter, int freeCellsFromEndLetter,bool isHorizontal)
         {
             LetterTile = letterTile;
             FreeCellsFromBeginningLetter = freeCellsFromBeginningLetter;
             FreeCellsFromEndLetter = freeCellsFromEndLetter;
+            IsHorizontal = isHorizontal;
         }
     }
 
@@ -31,4 +34,6 @@ namespace _Main._Scripts._GameStateMachine.States
             FreeCellsFromEndWord = freeCellsFromEndWord;
         }
     }
+    
+    
 }

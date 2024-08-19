@@ -13,12 +13,13 @@ namespace _Main._Scripts._GameStateMachine
         private readonly List<IState> _states;
         private IState _currentState;
         private readonly GameData _gameData;
+        private readonly FieldController _fieldController;
 
 
         public GameStateMachine(PlayingField playingField, NewLettersPanel newLettersPanel, LettersPool lettersPool,
             SortingDictionary dictionary, DragAndDrop dragAndDrop)
         {
-            playingField.InitializeGrid();
+            _fieldController = new FieldController(playingField);
             
             _gameData = new GameData();
             _states = new List<IState>
@@ -26,7 +27,7 @@ namespace _Main._Scripts._GameStateMachine
                 new InitState(this, dictionary, playingField, lettersPool, _gameData),
                 new PlayerStepState(this, playingField, newLettersPanel, lettersPool, dictionary, dragAndDrop,
                     _gameData),
-                new PCStepState(this, playingField, dictionary, lettersPool, _gameData),
+                new PCStepState(this,_fieldController),
                 new MainMenuState()
             };
 
