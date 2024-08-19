@@ -65,10 +65,10 @@ namespace _Main._Scripts.DictionaryLogic
             List<DictionaryWord> foundedWords = new();
             foreach (var holder in dictionaryHolders)
             {
+                if (holder.WordLength <= indexInWord) continue;
                 foreach (var letterWordHolder in holder.FirstLetterWordHolders)
                 {
                     foreach (var dictionaryWord in letterWordHolder.Words)
-
                         if (string.Equals(dictionaryWord.Word[indexInWord].ToString(),
                                 letter, StringComparison.OrdinalIgnoreCase))
                         {
@@ -115,9 +115,14 @@ namespace _Main._Scripts.DictionaryLogic
             foreach (var valuePair in wordDictionary)
             {
                 var trimWord = valuePair.Key.Trim();
-                var toUpperFirstLetterWord = CapitalizeFirstLetter(trimWord);
+                string newWord = trimWord;
+                if (trimWord.Contains('ё', StringComparison.OrdinalIgnoreCase))
+                    newWord = trimWord.Replace("ё", "е", StringComparison.OrdinalIgnoreCase);
+
+                var toUpperFirstLetterWord = CapitalizeFirstLetter(newWord);
                 var wordLength = toUpperFirstLetterWord.ToCharArray().Length;
                 var firstLetter = toUpperFirstLetterWord.ToCharArray()[0].ToString();
+
 
                 foreach (var holder in dictionaryHolders)
                 {

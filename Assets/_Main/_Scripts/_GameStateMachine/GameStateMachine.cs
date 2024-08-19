@@ -19,15 +19,15 @@ namespace _Main._Scripts._GameStateMachine
         public GameStateMachine(PlayingField playingField, NewLettersPanel newLettersPanel, LettersPool lettersPool,
             SortingDictionary dictionary, DragAndDrop dragAndDrop)
         {
-            _fieldController = new FieldController(playingField);
-            
             _gameData = new GameData();
+            _fieldController = new FieldController(playingField, _gameData,dictionary,lettersPool);
+
             _states = new List<IState>
             {
                 new InitState(this, dictionary, playingField, lettersPool, _gameData),
                 new PlayerStepState(this, playingField, newLettersPanel, lettersPool, dictionary, dragAndDrop,
                     _gameData),
-                new PCStepState(this,_fieldController),
+                new PCStepState(this, _fieldController),
                 new MainMenuState()
             };
 

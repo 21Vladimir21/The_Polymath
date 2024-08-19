@@ -8,10 +8,9 @@ namespace _Main._Scripts._GameStateMachine.States
     {
         private readonly IStateSwitcher _stateSwitcher;
         private readonly FieldController _fieldController;
-        private readonly PlayingField _playingField;
         private readonly GameData _gameData;
 
-        public PCStepState(IStateSwitcher stateSwitcher,FieldController fieldController)
+        public PCStepState(IStateSwitcher stateSwitcher, FieldController fieldController)
         {
             _stateSwitcher = stateSwitcher;
             _fieldController = fieldController;
@@ -35,23 +34,9 @@ namespace _Main._Scripts._GameStateMachine.States
 
             if (Input.GetKeyDown(KeyCode.M))
             {
-                _fieldController.CheckAndPlaceWord();
+                _fieldController.CreateWordFromLetter();
                 _stateSwitcher.SwitchState<PlayerStepState>();
             }
         }
-        
-        
-
-
-
-
-   
-
-
- 
-
-     
-
-     
     }
 }

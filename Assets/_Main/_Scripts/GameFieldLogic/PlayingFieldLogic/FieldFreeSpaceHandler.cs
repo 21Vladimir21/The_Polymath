@@ -11,9 +11,10 @@ namespace _Main._Scripts.GameFieldLogic
         private readonly PlayingField _playingField;
         private GameData _gameData;
 
-        public FieldFreeSpaceHandler(PlayingField playingField)
+        public FieldFreeSpaceHandler(PlayingField playingField, GameData gameData)
         {
             _playingField = playingField;
+            _gameData = gameData;
         }
 
 

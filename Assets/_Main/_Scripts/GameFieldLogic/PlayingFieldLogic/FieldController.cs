@@ -19,11 +19,15 @@ namespace _Main._Scripts.GameFieldLogic
         private LettersPool _lettersPool;
         private GameData _gameData;
 
-        public FieldController(PlayingField playingField)
+        public FieldController(PlayingField playingField, GameData gameData, SortingDictionary dictionary,
+            LettersPool lettersPool)
         {
             _playingField = playingField;
+            _gameData = gameData;
+            _dictionary = dictionary;
+            _lettersPool = lettersPool;
             playingField.InitializeGrid();
-            _fieldFreeSpaceHandler = new FieldFreeSpaceHandler(_playingField);
+            _fieldFreeSpaceHandler = new FieldFreeSpaceHandler(_playingField, _gameData);
         }
 
 
@@ -41,7 +45,6 @@ namespace _Main._Scripts.GameFieldLogic
             {
                 if (CanPlaceWord(info))
                 {
-                    
                     var words = _playingField.GetWordsOnField();
                     _gameData.AddNewWords(words);
                     return true;
@@ -51,7 +54,7 @@ namespace _Main._Scripts.GameFieldLogic
             return false;
         }
 
-        private bool CreateWordFromLetter()
+        public bool CreateWordFromLetter()
         {
             var letterFreeSpaceInfos = _fieldFreeSpaceHandler.TryGetStartCells();
 
@@ -72,9 +75,11 @@ namespace _Main._Scripts.GameFieldLogic
                     continue;
                 }
 
-                foreach (var word in words)
+                foreach (var candidateWord in words)
                 {
-                    var modifiedWord = MaskLetterAtPosition(word.Word, randomLetterPositionInWord);
+                    Debug.Log(candidateWord.Word);
+
+                    var modifiedWord = MaskLetterAtPosition(candidateWord.Word, randomLetterPositionInWord);
                     if (!CanFitWordInAvailableCells(modifiedWord, space.FreeCellsFromBeginningLetter,
                             space.FreeCellsFromEndLetter)) continue;
 
@@ -82,8 +87,8 @@ namespace _Main._Scripts.GameFieldLogic
                     if (letterTiles == null) continue;
 
                     PlaceLettersOnGrid(modifiedWord, space.IsHorizontal, space.LetterTile.TileCoordinates, letterTiles);
-                    
-                    
+
+
                     var wordsOnField = _playingField.GetWordsOnField();
                     _gameData.AddNewWords(wordsOnField);
                     return true;
@@ -125,7 +130,7 @@ namespace _Main._Scripts.GameFieldLogic
         private void PlaceLettersOnGrid(string modifiedWord, bool isHorizontal, Vector2Int startCoords,
             List<LetterTile> tiles)
         {
-            var startLetterIndex = modifiedWord.IndexOf('-');
+            var startLetterIndex = modifiedWord.IndexOf('-') ;
 
             for (int i = 0; i < modifiedWord.Length; i++)
             {
@@ -196,7 +201,7 @@ namespace _Main._Scripts.GameFieldLogic
         {
             List<LetterTile> foundedTiles = new();
             var charArray = word.ToList();
-            for (int j = 1; j < charArray.Count; j++)
+            for (int j = 0; j < charArray.Count; j++)
             {
                 var letter = charArray[j];
                 if (letter.Equals('-')) continue;
