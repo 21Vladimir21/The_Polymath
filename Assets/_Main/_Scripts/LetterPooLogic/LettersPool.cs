@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using _Main._Scripts.GameFieldLogic;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace _Main._Scripts.LetterPooLogic
 {
@@ -28,6 +30,12 @@ namespace _Main._Scripts.LetterPooLogic
                     _spawnedTiles.Add(tile);
                 }
             }
+        }
+
+        public LetterTile GetTileFromChar(char letter)
+        {
+            var enumLetter = Enum.Parse<Letters>(letter.ToString().ToUpper());
+            return GetTile(enumLetter);
         }
 
         public LetterTile GetTile(Letters letter)

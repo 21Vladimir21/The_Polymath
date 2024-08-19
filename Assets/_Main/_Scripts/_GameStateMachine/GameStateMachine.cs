@@ -19,6 +19,7 @@ namespace _Main._Scripts._GameStateMachine
             SortingDictionary dictionary, DragAndDrop dragAndDrop)
         {
             playingField.InitializeGrid();
+            
             _gameData = new GameData();
             _states = new List<IState>
             {

@@ -38,12 +38,47 @@ namespace _Main._Scripts.DictionaryLogic
 
             return foundWords.Count > 0 ? foundWords : null;
         }
-        
+
 
         public string GetWordDescription(string word)
         {
             var dictionaryWord = TryFoundWord(word);
             return dictionaryWord.Description;
+        }
+
+        public List<DictionaryWord> GetWordsFromWordPart(string word)
+        {
+            List<DictionaryWord> foundedWords = new();
+            var wordLength = word.Length;
+            foreach (var holder in dictionaryHolders)
+                if (holder.WordLength > wordLength)
+                    foreach (var letterWordHolder in holder.FirstLetterWordHolders)
+                    foreach (var dictionaryWord in letterWordHolder.Words)
+                        if (dictionaryWord.Word.Contains(word, StringComparison.OrdinalIgnoreCase))
+                            foundedWords.Add(dictionaryWord);
+
+            return foundedWords;
+        }
+
+        public List<DictionaryWord> GetWordsFromLetter(char letter, int indexInWord = 0)
+        {
+            List<DictionaryWord> foundedWords = new();
+            foreach (var holder in dictionaryHolders)
+            {
+                if (holder.WordLength >= 2)
+                {
+                    foreach (var letterWordHolder in holder.FirstLetterWordHolders)
+                    {
+                        foreach (var dictionaryWord in letterWordHolder.Words)
+
+                            if (string.Equals(dictionaryWord.Word[indexInWord].ToString(),
+                                    letter.ToString(), StringComparison.OrdinalIgnoreCase)){}
+                                foundedWords.Add(dictionaryWord);
+                    }
+                }
+            }
+
+            return foundedWords;
         }
 
         public string GetRandomWordWithLength(int length)

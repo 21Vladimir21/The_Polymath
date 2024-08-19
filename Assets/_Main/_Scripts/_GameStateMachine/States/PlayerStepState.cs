@@ -19,8 +19,6 @@ namespace _Main._Scripts._GameStateMachine.States
         private readonly SortingDictionary _dictionary;
         private readonly DragAndDrop _dragAndDrop;
         private readonly GameData _gameData;
-        private readonly StartWordCellsFinder _startWordCellsFinder;
-        private readonly WordCreator _wordCreator;
 
         private readonly List<Word> _createdWords = new();
 
@@ -34,9 +32,6 @@ namespace _Main._Scripts._GameStateMachine.States
             _dictionary = dictionary;
             _dragAndDrop = dragAndDrop;
             _gameData = gameData;
-
-            _startWordCellsFinder = new StartWordCellsFinder(_playingField.Grid);
-            _wordCreator = new WordCreator(_playingField.Grid);
         }
 
         public void Enter()
@@ -91,13 +86,9 @@ namespace _Main._Scripts._GameStateMachine.States
 
         private void CheckingGridForCorrectnessWords()
         {
-            var startWordsKeyValuePairs = _startWordCellsFinder.FindStartCellsIndexes();
             _createdWords.Clear();
-
-            List<Word> words = new();
-            foreach (var keyValuePair in startWordsKeyValuePairs)
-                words.AddRange(_wordCreator.CreateAWords(keyValuePair.Key, keyValuePair.Value));
-
+            List<Word> words = _playingField.GetWordsOnField();
+            
             foreach (var word in words)
             {
                 if (IsWordValid(word))
@@ -120,7 +111,7 @@ namespace _Main._Scripts._GameStateMachine.States
         {
             bool isNewWordInField = true;
             foreach (var createdWord in _gameData.CreatedWords)
-                if (string.Equals(createdWord, word.StringWord,StringComparison.OrdinalIgnoreCase))
+                if (string.Equals(createdWord.StringWord, word.StringWord, StringComparison.OrdinalIgnoreCase))
                     isNewWordInField = false;
 
             bool wordFits = word.Tiles.Any(tile => tile.InRightWord);

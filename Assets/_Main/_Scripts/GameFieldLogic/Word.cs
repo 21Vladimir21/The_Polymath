@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace _Main._Scripts.GameFieldLogic
 {
@@ -8,11 +9,16 @@ namespace _Main._Scripts.GameFieldLogic
         private int _wordPointsMultiplierValue = 1;
 
 
-        public Word(List<LetterTile> tiles,int multiplierValue)
+        public Word(List<LetterTile> tiles, bool isHorizontal, int multiplierValue = 1)
         {
             Tiles = tiles;
             _wordPointsMultiplierValue = multiplierValue;
+            IsHorizontal = isHorizontal;
         }
+
+        public bool IsHorizontal { get; private set; }
+        public Vector2Int GetWordStartCoordinates => Tiles[0].TileCoordinates;
+        public Vector2Int GetWordEndCoordinates => Tiles[^1].TileCoordinates;
 
         public string StringWord
         {
