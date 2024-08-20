@@ -29,10 +29,10 @@ namespace _Main._Scripts.GameFieldLogic
                     var endCoords = word.GetWordEndCoordinates;
 
 
-                    var rightFreeSpace = GetFreeHorizontalSpace(endCoords, true);
                     var leftFreeSpace = GetFreeHorizontalSpace(startCoords, false);
+                    var rightFreeSpace = GetFreeHorizontalSpace(endCoords, true);
 
-                    infos.Add(new WordFreeCellsInfo(word, rightFreeSpace, leftFreeSpace));
+                    infos.Add(new WordFreeCellsInfo(word, leftFreeSpace, rightFreeSpace));
                 }
                 else
                 {
@@ -40,8 +40,8 @@ namespace _Main._Scripts.GameFieldLogic
                     var endCoords = word.GetWordEndCoordinates;
 
 
-                    var bottomFreeSpace = GetFreeVerticalSpace(endCoords, true);
                     var upperFreeSpace = GetFreeVerticalSpace(startCoords, false);
+                    var bottomFreeSpace = GetFreeVerticalSpace(endCoords, true);
 
                     infos.Add(new WordFreeCellsInfo(word, upperFreeSpace, bottomFreeSpace));
                 }

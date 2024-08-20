@@ -30,8 +30,6 @@ namespace _Main._Scripts.GameFieldLogic
 
             foreach (var candidateWord in words)
             {
-                Debug.Log(candidateWord.Word);
-
                 var modifiedWord = MaskLetterAtPosition(candidateWord.Word, randomLetterPositionInWord);
                 if (!CanFitWordInAvailableCells(modifiedWord, space.FreeCellsFromBeginningLetter,
                         space.FreeCellsFromEndLetter)) continue;
@@ -41,6 +39,8 @@ namespace _Main._Scripts.GameFieldLogic
 
                 PlaceLettersOnGrid(modifiedWord, space.IsHorizontal, space.LetterTile.TileCoordinates, letterTiles);
 
+                Debug.Log(
+                    $"Начальная буква {space.LetterTile.LetterString} , Модифицированное слово {modifiedWord}, поставленное слово {candidateWord.Word}");
                 return true;
             }
 
@@ -53,8 +53,6 @@ namespace _Main._Scripts.GameFieldLogic
 
             foreach (var candidateWord in words)
             {
-                Debug.Log(candidateWord.Word);
-
                 var modifiedWord = MaskMatchingLetters(wordFreeCellsInfo.Word.StringWord, candidateWord.Word);
 
                 if (!CanFitWordInAvailableCells(modifiedWord, wordFreeCellsInfo.FreeCellsFromBeginningWord,
@@ -64,6 +62,9 @@ namespace _Main._Scripts.GameFieldLogic
                 if (letterTiles == null) continue;
 
                 PlaceLettersOnGrid(modifiedWord, wordFreeCellsInfo, letterTiles);
+
+                Debug.Log(
+                    $"Начальное слово {wordFreeCellsInfo.Word.StringWord} , Модифицированное слово {modifiedWord}, поставленное слово {candidateWord.Word}");
 
                 return true;
             }
@@ -104,18 +105,10 @@ namespace _Main._Scripts.GameFieldLogic
             }
         }
 
-
         private string MaskMatchingLetters(string word, string wordForModified)
         {
-            var modifiedWord = wordForModified;
-            foreach (var letter in word)
-            {
-                if (!modifiedWord.Contains(letter, StringComparison.OrdinalIgnoreCase)) continue;
-                var index = modifiedWord.IndexOf(letter, StringComparison.OrdinalIgnoreCase);
-                modifiedWord = modifiedWord.Remove(index, 1).Insert(index, "-");
-            }
-
-            return modifiedWord;
+            var maskWordPart = new string('-', word.Length);
+            return wordForModified.Replace(word, maskWordPart, StringComparison.OrdinalIgnoreCase);
         }
 
         private string MaskLetterAtPosition(string word, int index) => word.Remove(index, 1).Insert(index, "-");

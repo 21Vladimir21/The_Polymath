@@ -116,6 +116,8 @@ namespace _Main._Scripts.DictionaryLogic
             {
                 var trimWord = valuePair.Key.Trim();
                 string newWord = trimWord;
+                if (trimWord.Contains('-', StringComparison.OrdinalIgnoreCase))
+                    continue;
                 if (trimWord.Contains('ё', StringComparison.OrdinalIgnoreCase))
                     newWord = trimWord.Replace("ё", "е", StringComparison.OrdinalIgnoreCase);
 

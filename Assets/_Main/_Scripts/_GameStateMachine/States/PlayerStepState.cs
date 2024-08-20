@@ -19,11 +19,12 @@ namespace _Main._Scripts._GameStateMachine.States
         private readonly SortingDictionary _dictionary;
         private readonly DragAndDrop _dragAndDrop;
         private readonly GameData _gameData;
+        private readonly FieldController _fieldController;
 
         private readonly List<Word> _createdWords = new();
 
         public PlayerStepState(IStateSwitcher stateSwitcher, PlayingField playingField, NewLettersPanel newLettersPanel,
-            LettersPool lettersPool, SortingDictionary dictionary, DragAndDrop dragAndDrop, GameData gameData)
+            LettersPool lettersPool, SortingDictionary dictionary, DragAndDrop dragAndDrop, GameData gameData,FieldController fieldController)
         {
             _stateSwitcher = stateSwitcher;
             _playingField = playingField;
@@ -32,6 +33,7 @@ namespace _Main._Scripts._GameStateMachine.States
             _dictionary = dictionary;
             _dragAndDrop = dragAndDrop;
             _gameData = gameData;
+            _fieldController = fieldController;
         }
 
         public void Enter()
@@ -42,7 +44,10 @@ namespace _Main._Scripts._GameStateMachine.States
 
         public void Exit()
         {
+            _newLettersPanel.ReturnNotRightTiles();
+            _fieldController.ClearNotRightTiles();
             _dragAndDrop.CanDrag = false;
+            _fieldController.UpdateFieldWords();
             SetNewLettersInPanel();
         }
 
@@ -53,9 +58,15 @@ namespace _Main._Scripts._GameStateMachine.States
                 CheckingGridForCorrectnessWords();
             }
 
-            if (Input.GetKeyDown(KeyCode.R))
+            if (Input.GetKeyDown(KeyCode.P))
             {
                 _stateSwitcher.SwitchState<PCStepState>();
+            }
+
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                _newLettersPanel.ReturnAllTilesIntoCells();
+                _fieldController.ClearMovableTiles();
             }
         }
 
@@ -80,7 +91,7 @@ namespace _Main._Scripts._GameStateMachine.States
             for (int i = 0; i < freeCells.Count; i++)
             {
                 var tile = _lettersPool.GetTile(randomLetters[i]);
-                freeCells[i].AddTile(tile);
+                freeCells[i].AddTileAndAllowMove(tile);
             }
         }
 
@@ -88,7 +99,7 @@ namespace _Main._Scripts._GameStateMachine.States
         {
             _createdWords.Clear();
             List<Word> words = _playingField.GetWordsOnField();
-            
+
             foreach (var word in words)
             {
                 if (IsWordValid(word))
@@ -115,7 +126,9 @@ namespace _Main._Scripts._GameStateMachine.States
                     isNewWordInField = false;
 
             bool wordFits = word.Tiles.Any(tile => tile.InRightWord);
-            bool wordExists = !string.IsNullOrEmpty(_dictionary.TryFoundWord(word.StringWord).Word);
+            var foundWord = _dictionary.TryFoundWord(word.StringWord);
+            bool wordExists = foundWord != null && !string.IsNullOrEmpty(foundWord.Word);
+
             return isNewWordInField && wordExists && wordFits;
         }
 

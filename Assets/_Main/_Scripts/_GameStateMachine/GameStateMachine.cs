@@ -12,22 +12,20 @@ namespace _Main._Scripts._GameStateMachine
     {
         private readonly List<IState> _states;
         private IState _currentState;
-        private readonly GameData _gameData;
-        private readonly FieldController _fieldController;
 
 
         public GameStateMachine(PlayingField playingField, NewLettersPanel newLettersPanel, LettersPool lettersPool,
             SortingDictionary dictionary, DragAndDrop dragAndDrop)
         {
-            _gameData = new GameData();
-            _fieldController = new FieldController(playingField, _gameData,dictionary,lettersPool);
+            var gameData = new GameData();
+            var fieldController = new FieldController(playingField, gameData,dictionary,lettersPool);
 
             _states = new List<IState>
             {
-                new InitState(this, dictionary, playingField, lettersPool, _gameData),
+                new InitState(this, dictionary, playingField, lettersPool, gameData),
                 new PlayerStepState(this, playingField, newLettersPanel, lettersPool, dictionary, dragAndDrop,
-                    _gameData),
-                new PCStepState(this, _fieldController),
+                    gameData,fieldController),
+                new PCStepState(this, fieldController),
                 new MainMenuState()
             };
 

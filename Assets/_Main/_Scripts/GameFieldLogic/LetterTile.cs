@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEditor;
 using UnityEngine;
@@ -7,6 +8,7 @@ namespace _Main._Scripts.GameFieldLogic
     [RequireComponent(typeof(RectTransform))]
     public class LetterTile : MonoBehaviour
     {
+        public Action ReturnToPanel;
         [field: SerializeField] public Letters Letter { get; private set; }
         [SerializeField, Range(1, 10)] private int points;
         [SerializeField] private TMP_Text letterText;

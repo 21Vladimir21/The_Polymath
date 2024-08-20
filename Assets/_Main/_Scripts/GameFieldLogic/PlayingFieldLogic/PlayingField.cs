@@ -37,7 +37,7 @@ namespace _Main._Scripts.GameFieldLogic
             return words;
         }
 
-        private List<Word> CreateAWords(Vector2 index, CheckingFieldDirection checkDirection)
+        private List<Word> CreateAWords(Vector2 index, CheckingFieldDirection checkDirection) 
         {
             List<Word> createdWords = new();
             Word horizontalWordResult;

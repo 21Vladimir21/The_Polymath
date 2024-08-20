@@ -5,11 +5,11 @@ namespace _Main._Scripts.GameFieldLogic
 {
     public class NewLettersPanel : MonoBehaviour
     {
-        [SerializeField] private List<TileCell> cells;
+        [SerializeField] private List<NewLetterPanelCell> cells;
 
-        public List<TileCell> GetFreeCells()
+        public List<NewLetterPanelCell> GetFreeCells()
         {
-            List<TileCell> freeCells = new();
+            List<NewLetterPanelCell> freeCells = new();
             foreach (var cell in cells)
             {
                 if (cell.IsBusy) continue;
@@ -17,6 +17,32 @@ namespace _Main._Scripts.GameFieldLogic
             }
 
             return freeCells;
+        }
+
+        public void ReturnAllTilesIntoCells()
+        {
+            foreach (var cell in cells)
+            {
+                if (cell.IsBusy)
+                    continue;
+                ReturnTileToFreeCell(cell.LastTile);
+            }
+        }
+
+        public void ReturnNotRightTiles()
+        {
+            foreach (var cell in cells)
+            {
+                if (cell.IsBusy || cell.LastTile.InRightWord)
+                    continue;
+                ReturnTileToFreeCell(cell.LastTile);
+            }
+        }
+
+        private void ReturnTileToFreeCell(LetterTile tile)
+        {
+            var freeCells = GetFreeCells();
+            freeCells[0].AddTileAndAllowMove(tile);
         }
     }
 }

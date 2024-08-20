@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using _Main._Scripts._GameStateMachine.States;
 using _Main._Scripts.DictionaryLogic;
 using _Main._Scripts.GameDatas;
 using _Main._Scripts.LetterPooLogic;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace _Main._Scripts.GameFieldLogic
 {
@@ -52,7 +47,8 @@ namespace _Main._Scripts.GameFieldLogic
             return false;
         }
 
-        public bool CheckAndPlaceWordFromLetter() //TODO:Наверное можно сделать generic класс и скоратить код до 1 метода 
+        public bool
+            CheckAndPlaceWordFromLetter() //TODO:Наверное можно сделать generic класс и скоратить код до 1 метода 
         {
             var letterFreeSpaceInfos = _fieldFreeSpaceHandler.TryGetStartCells();
 
@@ -73,12 +69,25 @@ namespace _Main._Scripts.GameFieldLogic
             return false;
         }
 
-        private void UpdateFieldWords()
+        public void ClearNotRightTiles()
+        {
+            for (int i = 0; i < _playingField.Grid.GetLength(0); i++)
+            for (int j = 0; j < _playingField.Grid.GetLength(1); j++)
+                if (_playingField.Grid[i, j].CurrentTile != null && _playingField.Grid[i, j].CurrentTile.InRightWord == false)
+                    _playingField.Grid[i, j].ClearTileData();
+        }
+        public void ClearMovableTiles()
+        {
+            for (int i = 0; i < _playingField.Grid.GetLength(0); i++)
+            for (int j = 0; j < _playingField.Grid.GetLength(1); j++)
+                if (_playingField.Grid[i, j].CurrentTile != null && _playingField.Grid[i, j].CurrentTile.CanMove)
+                    _playingField.Grid[i, j].ClearTileData();
+        }
+
+        public void UpdateFieldWords()
         {
             var words = _playingField.GetWordsOnField();
             _gameData.AddNewWords(words);
         }
-
-        
     }
 }

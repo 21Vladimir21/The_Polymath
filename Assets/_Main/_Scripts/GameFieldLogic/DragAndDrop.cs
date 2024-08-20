@@ -20,7 +20,7 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public void OnPointerDown(PointerEventData eventData)
     {
         if (CanDrag == false) return;
-        
+
         if (eventData.pointerCurrentRaycast.gameObject.TryGetComponent(out TileCell cell))
             if (cell.IsBusy && cell.CurrentTile.CanMove)
                 StartDrag(cell);
@@ -51,11 +51,8 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     private void SelectNewCell(TileCell cell)
     {
-        if (_startDragCell != cell && cell != _lastSelectedCell)
-        {
-            _selectedCell = cell;
-            _lastSelectedCell = cell;
-        }
+        _selectedCell = cell;
+        _lastSelectedCell = cell;
     }
 
     private void ResetDrag()
@@ -69,7 +66,7 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     private void RearrangeTile()
     {
-        _selectedCell.AddTile(_startDragCell.CurrentTile);
+        _selectedCell.AddTileAndAllowMove(_startDragCell.CurrentTile);
         _startDragCell.ClearTileData();
     }
 
