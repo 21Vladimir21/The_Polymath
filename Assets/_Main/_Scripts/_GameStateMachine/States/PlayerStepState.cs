@@ -107,7 +107,7 @@ namespace _Main._Scripts._GameStateMachine.States
             Debug.Log($"Points per step - {pointPerStep}");
         }
 
-        private bool IsWordValid(Word word) //TODO: в FC
+        private bool IsWordValid(Word word)
         {
             bool isNewWordInField = true;
             foreach (var createdWord in _gameData.CreatedWords)

@@ -34,7 +34,7 @@ namespace _Main._Scripts._GameStateMachine.States
 
             if (Input.GetKeyDown(KeyCode.M))
             {
-                _fieldController.CreateWordFromLetter();
+                _fieldController.CheckAndPlaceWordFromLetter();
                 _stateSwitcher.SwitchState<PlayerStepState>();
             }
         }
