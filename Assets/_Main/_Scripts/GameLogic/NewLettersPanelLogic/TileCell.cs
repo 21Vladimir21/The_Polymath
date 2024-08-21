@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace _Main._Scripts.GameFieldLogic
+namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
 {
     public class TileCell : MonoBehaviour
     {

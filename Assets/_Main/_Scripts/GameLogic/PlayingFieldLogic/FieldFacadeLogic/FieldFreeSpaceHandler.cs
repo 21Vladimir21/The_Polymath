@@ -3,16 +3,17 @@ using _Main._Scripts._GameStateMachine.States;
 using _Main._Scripts.GameDatas;
 using UnityEngine;
 
-
-namespace _Main._Scripts.GameFieldLogic
+namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
 {
     public class FieldFreeSpaceHandler
     {
+        private readonly PlayingFieldCell[,] _grid;
         private readonly PlayingField _playingField;
         private GameData _gameData;
 
-        public FieldFreeSpaceHandler(PlayingField playingField, GameData gameData)
+        public FieldFreeSpaceHandler(PlayingFieldCell[,] grid,PlayingField playingField, GameData gameData)
         {
+            _grid = grid;
             _playingField = playingField;
             _gameData = gameData;
         }
@@ -57,7 +58,7 @@ namespace _Main._Scripts.GameFieldLogic
             int start = coords.y + direction;
             var freeSpaceCount = 0;
 
-            while (start >= 0 && start < _playingField.Grid.GetLength(0))
+            while (start >= 0 && start < _grid.GetLength(0))
             {
                 if (CheckUpDownTilesOnBusy(coords.x, start, ref freeSpaceCount))
                     break;
@@ -74,7 +75,7 @@ namespace _Main._Scripts.GameFieldLogic
             int start = coords.x + direction;
             var freeSpaceCount = 0;
 
-            while (start >= 0 && start < _playingField.Grid.GetLength(0))
+            while (start >= 0 && start < _grid.GetLength(0))
             {
                 if (CheckLeftRightTilesOnBusy(start, coords.y, ref freeSpaceCount))
                     break;
@@ -89,15 +90,15 @@ namespace _Main._Scripts.GameFieldLogic
         private bool CheckUpDownTilesOnBusy(int x, int y, ref int freeSpaceCount)
         {
             var isTopEdge = x == 0;
-            var isBottomEdge = x == _playingField.Grid.GetLength(1) - 1;
-            if (_playingField.Grid[x, y].IsBusy)
+            var isBottomEdge = x == _grid.GetLength(1) - 1;
+            if (_grid[x, y].IsBusy)
             {
                 freeSpaceCount--;
                 return true;
             }
 
-            if (!isBottomEdge && _playingField.Grid[x + 1, y].IsBusy) return true;
-            if (!isTopEdge && _playingField.Grid[x - 1, y].IsBusy) return true;
+            if (!isBottomEdge && _grid[x + 1, y].IsBusy) return true;
+            if (!isTopEdge && _grid[x - 1, y].IsBusy) return true;
             freeSpaceCount++;
             return false;
         }
@@ -105,16 +106,16 @@ namespace _Main._Scripts.GameFieldLogic
         private bool CheckLeftRightTilesOnBusy(int x, int y, ref int cycleValue)
         {
             var isLeftEdge = y == 0;
-            var isRightEdge = y == _playingField.Grid.GetLength(0) - 1;
+            var isRightEdge = y == _grid.GetLength(0) - 1;
 
-            if (_playingField.Grid[x, y].IsBusy)
+            if (_grid[x, y].IsBusy)
             {
                 cycleValue--;
                 return true;
             }
 
-            if (!isRightEdge && _playingField.Grid[x, y + 1].IsBusy) return true;
-            if (!isLeftEdge && _playingField.Grid[x, y - 1].IsBusy) return true;
+            if (!isRightEdge && _grid[x, y + 1].IsBusy) return true;
+            if (!isLeftEdge && _grid[x, y - 1].IsBusy) return true;
             cycleValue++;
             return false;
         }

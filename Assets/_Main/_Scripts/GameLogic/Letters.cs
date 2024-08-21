@@ -1,4 +1,4 @@
-namespace _Main._Scripts.GameFieldLogic
+namespace _Main._Scripts.GameLogic
 {
     public enum Letters
     {

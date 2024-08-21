@@ -1,6 +1,7 @@
+using _Main._Scripts.GameLogic.NewLettersPanelLogic;
 using UnityEngine;
 
-namespace _Main._Scripts.GameFieldLogic
+namespace _Main._Scripts.GameLogic
 {
     public class PlayingFieldCell : TileCell
     {

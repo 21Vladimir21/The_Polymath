@@ -3,7 +3,7 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 
-namespace _Main._Scripts.GameFieldLogic
+namespace _Main._Scripts.GameLogic
 {
     [RequireComponent(typeof(RectTransform))]
     public class LetterTile : MonoBehaviour

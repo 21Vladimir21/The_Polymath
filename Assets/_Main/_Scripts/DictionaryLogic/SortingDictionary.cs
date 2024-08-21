@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using _Main._Scripts.GameFieldLogic;
+using _Main._Scripts.GameLogic;
 using Newtonsoft.Json;
 using Unity.VisualScripting;
 using UnityEngine;

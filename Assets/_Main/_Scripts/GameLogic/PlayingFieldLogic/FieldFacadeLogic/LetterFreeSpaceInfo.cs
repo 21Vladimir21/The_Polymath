@@ -1,5 +1,5 @@
 using System;
-using _Main._Scripts.GameFieldLogic;
+using _Main._Scripts.GameLogic;
 using UnityEngine;
 
 namespace _Main._Scripts._GameStateMachine.States

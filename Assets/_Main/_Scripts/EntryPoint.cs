@@ -1,6 +1,7 @@
 using _Main._Scripts._GameStateMachine;
 using _Main._Scripts.DictionaryLogic;
-using _Main._Scripts.GameFieldLogic;
+using _Main._Scripts.GameLogic.NewLettersPanelLogic;
+using _Main._Scripts.GameLogic.PlayingFieldLogic;
 using _Main._Scripts.LetterPooLogic;
 using UnityEngine;
 using UnityEngine.Serialization;

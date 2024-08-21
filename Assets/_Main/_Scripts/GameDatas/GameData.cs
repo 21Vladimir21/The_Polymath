@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using _Main._Scripts.GameFieldLogic;
+using _Main._Scripts.GameLogic;
 
 namespace _Main._Scripts.GameDatas
 {

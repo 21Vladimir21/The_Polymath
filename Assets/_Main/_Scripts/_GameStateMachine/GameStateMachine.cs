@@ -3,7 +3,9 @@ using System.Linq;
 using _Main._Scripts._GameStateMachine.States;
 using _Main._Scripts.DictionaryLogic;
 using _Main._Scripts.GameDatas;
-using _Main._Scripts.GameFieldLogic;
+using _Main._Scripts.GameLogic.NewLettersPanelLogic;
+using _Main._Scripts.GameLogic.PlayingFieldLogic;
+using _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic;
 using _Main._Scripts.LetterPooLogic;
 
 namespace _Main._Scripts._GameStateMachine
@@ -18,14 +20,13 @@ namespace _Main._Scripts._GameStateMachine
             SortingDictionary dictionary, DragAndDrop dragAndDrop)
         {
             var gameData = new GameData();
-            var fieldController = new FieldController(playingField, gameData,dictionary,lettersPool);
+            var fieldFacade = new FieldFacade(playingField, gameData, dictionary, lettersPool);
 
             _states = new List<IState>
             {
-                new InitState(this, dictionary, playingField, lettersPool, gameData),
-                new PlayerStepState(this, playingField, newLettersPanel, lettersPool, dictionary, dragAndDrop,
-                    gameData,fieldController),
-                new PCStepState(this, fieldController),
+                new EntryState(this, fieldFacade),
+                new PlayerStepState(this, newLettersPanel, lettersPool, dictionary, dragAndDrop, gameData, fieldFacade),
+                new PCStepState(this, fieldFacade),
                 new MainMenuState()
             };
 

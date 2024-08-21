@@ -1,4 +1,4 @@
-using _Main._Scripts.GameFieldLogic;
+using _Main._Scripts.GameLogic.NewLettersPanelLogic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 

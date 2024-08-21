@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using _Main._Scripts.GameFieldLogic;
+using _Main._Scripts.GameLogic;
 using UnityEngine;
 
 namespace _Main._Scripts.LetterPooLogic

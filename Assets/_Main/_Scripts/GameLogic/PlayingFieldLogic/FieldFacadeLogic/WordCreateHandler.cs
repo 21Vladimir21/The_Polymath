@@ -7,16 +7,18 @@ using _Main._Scripts.LetterPooLogic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace _Main._Scripts.GameFieldLogic
+namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
 {
     public class WordCreateHandler
     {
+        private readonly PlayingFieldCell[,] _grid;
         private readonly SortingDictionary _dictionary;
         private readonly PlayingField _playingField;
         private readonly LettersPool _lettersPool;
 
-        public WordCreateHandler(SortingDictionary dictionary, PlayingField playingField, LettersPool lettersPool)
+        public WordCreateHandler(PlayingFieldCell[,] grid,SortingDictionary dictionary, PlayingField playingField, LettersPool lettersPool)
         {
+            _grid = grid;
             _dictionary = dictionary;
             _playingField = playingField;
             _lettersPool = lettersPool;
@@ -95,9 +97,9 @@ namespace _Main._Scripts.GameFieldLogic
                             StringComparison.OrdinalIgnoreCase)) continue;
 
                     if (isHorizontal)
-                        _playingField.Grid[startCoords.x, newIndex].AddTile(tile);
+                        _grid[startCoords.x, newIndex].AddTile(tile);
                     else
-                        _playingField.Grid[newIndex, startCoords.y].AddTile(tile);
+                        _grid[newIndex, startCoords.y].AddTile(tile);
 
                     tiles.Remove(tile);
                     break;
