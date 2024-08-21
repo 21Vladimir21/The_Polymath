@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using _Main._Scripts._GameStateMachine.States;
 using _Main._Scripts.DictionaryLogic;
 using _Main._Scripts.LetterPooLogic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -24,10 +26,10 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
             _lettersPool = lettersPool;
         }
 
-        public bool CanPlaceWord(LetterFreeSpaceInfo space)
+        public async UniTask<bool> CanPlaceWord(LetterFreeSpaceInfo space)
         {
             var randomLetterPositionInWord = Random.Range(0, space.FreeCellsFromBeginningLetter);
-            var words = _dictionary.GetWordsWithLetterAtPosition(space.LetterTile.LetterString,
+            var words = await _dictionary.GetWordsWithLetterAtPosition(space.LetterTile.LetterString,
                 randomLetterPositionInWord);
 
             foreach (var candidateWord in words)
@@ -49,9 +51,9 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
             return false;
         }
 
-        public bool CanPlaceWord(WordFreeCellsInfo wordFreeCellsInfo)
+        public async UniTask<bool> CanPlaceWord(WordFreeCellsInfo wordFreeCellsInfo)
         {
-            var words = _dictionary.GetWordsFromWordPart(wordFreeCellsInfo.Word.StringWord);
+            var words = await _dictionary.GetWordsFromWordPart(wordFreeCellsInfo.Word.StringWord);
 
             foreach (var candidateWord in words)
             {

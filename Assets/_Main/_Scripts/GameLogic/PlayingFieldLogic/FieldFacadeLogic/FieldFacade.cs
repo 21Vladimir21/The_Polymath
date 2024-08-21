@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using _Main._Scripts.DictionaryLogic;
 using _Main._Scripts.GameDatas;
 using _Main._Scripts.LetterPooLogic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
@@ -45,7 +47,7 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
         }
 
 
-        public bool CheckAndPlaceWord()
+        public async UniTask<bool> CheckAndPlaceWord()
         {
             var freeSpaceInfos =
                 _fieldFreeSpaceHandler.TryGetWordFreeSpaceInfo();
@@ -57,7 +59,7 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
 
             foreach (var info in freeSpaceInfos)
             {
-                if (!_wordCreateHandler.CanPlaceWord(info)) continue;
+                if (!await _wordCreateHandler.CanPlaceWord(info)) continue;
                 UpdateFieldWords();
                 return true;
             }
@@ -65,8 +67,8 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
             return false;
         }
 
-        public bool
-            CheckAndPlaceWordFromLetter() //TODO:Наверное можно сделать generic класс и скоратить код до 1 метода 
+        public async UniTask<bool> CheckAndPlaceWordFromLetter()
+            //TODO:Наверное можно сделать generic класс и скоратить код до 1 метода 
         {
             var letterFreeSpaceInfos = _fieldFreeSpaceHandler.TryGetStartCells();
 
@@ -79,7 +81,7 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
             foreach (var space in letterFreeSpaceInfos)
                 // TODO: Добавить рандомный выьор первой точки , что бы бот не ставил в предсказуемое место 
             {
-                if (!_wordCreateHandler.CanPlaceWord(space)) continue;
+                if (!await _wordCreateHandler.CanPlaceWord(space)) continue;
                 UpdateFieldWords();
                 return true;
             }
@@ -147,7 +149,7 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
                 tile.SetOnField(testStartIndexes[i]);
             }
 
-            _gameData.CreatedWords.Add(new Word(tiles,true));
+            _gameData.CreatedWords.Add(new Word(tiles, true));
 
             //TODO: Надо бы убрать , но часто юзаю для тестов :)
             var enumLetter2 = Enum.Parse<Letters>("Е");

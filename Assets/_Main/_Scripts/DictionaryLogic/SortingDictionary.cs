@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using _Main._Scripts.GameLogic;
+using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -46,21 +47,26 @@ namespace _Main._Scripts.DictionaryLogic
             return dictionaryWord.Description;
         }
 
-        public List<DictionaryWord> GetWordsFromWordPart(string word)
+        public async UniTask<List<DictionaryWord>> GetWordsFromWordPart(string word)
         {
             List<DictionaryWord> foundedWords = new();
             var wordLength = word.Length;
             foreach (var holder in dictionaryHolders)
+            {
+                
                 if (holder.WordLength > wordLength)
                     foreach (var letterWordHolder in holder.FirstLetterWordHolders)
                     foreach (var dictionaryWord in letterWordHolder.Words)
                         if (dictionaryWord.Word.Contains(word, StringComparison.OrdinalIgnoreCase))
                             foundedWords.Add(dictionaryWord);
+                
+                await UniTask.Yield();
+            }
 
             return foundedWords;
         }
 
-        public List<DictionaryWord> GetWordsWithLetterAtPosition(string letter, int indexInWord = 0)
+        public async UniTask<List<DictionaryWord>> GetWordsWithLetterAtPosition(string letter, int indexInWord = 0)
         {
             List<DictionaryWord> foundedWords = new();
             foreach (var holder in dictionaryHolders)
@@ -75,6 +81,8 @@ namespace _Main._Scripts.DictionaryLogic
                             foundedWords.Add(dictionaryWord);
                         }
                 }
+
+                await UniTask.Yield();
             }
 
             return foundedWords;
@@ -84,20 +92,17 @@ namespace _Main._Scripts.DictionaryLogic
         {
             foreach (var holder in dictionaryHolders)
             {
-                if (holder.WordLength == length)
+                if (holder.WordLength != length) continue;
+
+                while (true)
                 {
-                    bool wordFound = false;
-                    while (wordFound == false)
-                    {
-                        var randomFirstLetter = Random.Range(0, holder.FirstLetterWordHolders.Count);
-                        if (holder.FirstLetterWordHolders[randomFirstLetter].Words.Count <= 0)
-                            continue;
-                        wordFound = true;
-                        var randomWordIndex =
-                            Random.Range(0, holder.FirstLetterWordHolders[randomFirstLetter].Words.Count);
-                        var randomWord = holder.FirstLetterWordHolders[randomFirstLetter].Words[randomWordIndex];
-                        return randomWord.Word;
-                    }
+                    var randomFirstLetter = Random.Range(0, holder.FirstLetterWordHolders.Count);
+                    if (holder.FirstLetterWordHolders[randomFirstLetter].Words.Count <= 0)
+                        continue;
+                    var randomWordIndex =
+                        Random.Range(0, holder.FirstLetterWordHolders[randomFirstLetter].Words.Count);
+                    var randomWord = holder.FirstLetterWordHolders[randomFirstLetter].Words[randomWordIndex];
+                    return randomWord.Word;
                 }
             }
 

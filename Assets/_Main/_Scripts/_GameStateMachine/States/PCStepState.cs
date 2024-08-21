@@ -24,17 +24,17 @@ namespace _Main._Scripts._GameStateMachine.States
         {
         }
 
-        public void Update()
+        public async void Update()
         {
             if (Input.GetKeyDown(KeyCode.N))
             {
-                _fieldFacade.CheckAndPlaceWord();
+               await  _fieldFacade.CheckAndPlaceWord();
                 _stateSwitcher.SwitchState<PlayerStepState>();
             }
 
             if (Input.GetKeyDown(KeyCode.M))
             {
-                _fieldFacade.CheckAndPlaceWordFromLetter();
+                await _fieldFacade.CheckAndPlaceWordFromLetter();
                 _stateSwitcher.SwitchState<PlayerStepState>();
             }
         }
