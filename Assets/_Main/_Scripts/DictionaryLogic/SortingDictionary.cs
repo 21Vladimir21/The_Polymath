@@ -17,6 +17,7 @@ namespace _Main._Scripts.DictionaryLogic
         [SerializeField] private TextAsset words;
 
         [SerializeField] private List<WordLengthDictionaryHolder> dictionaryHolders = new();
+        public HashSet<HashSet<string>> dsdsd;
 
 
         public List<string> GetWordsFromFirstLetterAndLength(Letters firstLetter, int length)

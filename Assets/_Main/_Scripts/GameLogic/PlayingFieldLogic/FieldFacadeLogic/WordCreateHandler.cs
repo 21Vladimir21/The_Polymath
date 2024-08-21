@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using _Main._Scripts._GameStateMachine.States;
 using _Main._Scripts.DictionaryLogic;
 using _Main._Scripts.LetterPooLogic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Events;
 using Random = UnityEngine.Random;
 
 namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
@@ -15,49 +15,64 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
     {
         private readonly PlayingFieldCell[,] _grid;
         private readonly SortingDictionary _dictionary;
-        private readonly PlayingField _playingField;
         private readonly LettersPool _lettersPool;
+        private readonly UnityEvent<int> _onSuccessPlaceWord;
 
-        public WordCreateHandler(PlayingFieldCell[,] grid,SortingDictionary dictionary, PlayingField playingField, LettersPool lettersPool)
+        public WordCreateHandler(PlayingFieldCell[,] grid, SortingDictionary dictionary,
+            LettersPool lettersPool, UnityEvent<int> onSuccessPlaceWord)
         {
             _grid = grid;
             _dictionary = dictionary;
-            _playingField = playingField;
             _lettersPool = lettersPool;
+            _onSuccessPlaceWord = onSuccessPlaceWord;
         }
 
-        public async UniTask<bool> CanPlaceWord(LetterFreeSpaceInfo space)
+        public async UniTask<bool> CanPlaceWord(LetterFreeSpaceInfo space, int remainedTiles)
         {
-            var randomLetterPositionInWord = Random.Range(0, space.FreeCellsFromBeginningLetter);
-            var words = await _dictionary.GetWordsWithLetterAtPosition(space.LetterTile.LetterString,
-                randomLetterPositionInWord);
+            HashSet<int> usedLetterPositions = new();
 
-            foreach (var candidateWord in words)
+            while (usedLetterPositions.Count < space.FreeCellsFromBeginningLetter)
             {
-                var modifiedWord = MaskLetterAtPosition(candidateWord.Word, randomLetterPositionInWord);
-                if (!CanFitWordInAvailableCells(modifiedWord, space.FreeCellsFromBeginningLetter,
-                        space.FreeCellsFromEndLetter)) continue;
+                var randomLetterPositionInWord = Random.Range(0, space.FreeCellsFromBeginningLetter);
+                if (!usedLetterPositions.Add(randomLetterPositionInWord)) continue;
 
-                var letterTiles = TilesFounded(modifiedWord);
-                if (letterTiles == null) continue;
+                var words = await _dictionary.GetWordsWithLetterAtPosition(space.LetterTile.LetterString,
+                    randomLetterPositionInWord);
 
-                PlaceLettersOnGrid(modifiedWord, space.IsHorizontal, space.LetterTile.TileCoordinates, letterTiles);
+                foreach (var candidateWord in words)
+                {
+                    var modifiedWord = MaskLetterAtPosition(candidateWord.Word, randomLetterPositionInWord);
 
-                Debug.Log(
-                    $"Начальная буква {space.LetterTile.LetterString} , Модифицированное слово {modifiedWord}, поставленное слово {candidateWord.Word}");
-                return true;
+                    var remainingTilesNow = IsEnoughTiles(remainedTiles, modifiedWord);
+                    if (remainingTilesNow < 0) continue;
+
+                    if (!CanFitWordInAvailableCells(modifiedWord, space.FreeCellsFromBeginningLetter,
+                            space.FreeCellsFromEndLetter)) continue;
+
+                    var letterTiles = TilesFounded(modifiedWord);
+                    if (letterTiles == null) continue;
+
+                    PlaceLettersOnGrid(modifiedWord, space.IsHorizontal, space.LetterTile.TileCoordinates, letterTiles);
+                    _onSuccessPlaceWord?.Invoke(remainingTilesNow);
+                    Debug.Log(
+                        $"Начальная буква {space.LetterTile.LetterString} , Модифицированное слово {modifiedWord}, поставленное слово {candidateWord.Word}");
+                    return true;
+                }
             }
 
             return false;
         }
 
-        public async UniTask<bool> CanPlaceWord(WordFreeCellsInfo wordFreeCellsInfo)
+        public async UniTask<bool> CanPlaceWord(WordFreeCellsInfo wordFreeCellsInfo, int remainedTiles)
         {
             var words = await _dictionary.GetWordsFromWordPart(wordFreeCellsInfo.Word.StringWord);
 
             foreach (var candidateWord in words)
             {
                 var modifiedWord = MaskMatchingLetters(wordFreeCellsInfo.Word.StringWord, candidateWord.Word);
+
+                var remainingTilesNow = IsEnoughTiles(remainedTiles, modifiedWord);
+                if (remainingTilesNow < 0) continue;
 
                 if (!CanFitWordInAvailableCells(modifiedWord, wordFreeCellsInfo.FreeCellsFromBeginningWord,
                         wordFreeCellsInfo.FreeCellsFromEndWord)) continue;
@@ -66,7 +81,7 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
                 if (letterTiles == null) continue;
 
                 PlaceLettersOnGrid(modifiedWord, wordFreeCellsInfo, letterTiles);
-
+                _onSuccessPlaceWord?.Invoke(remainingTilesNow);
                 Debug.Log(
                     $"Начальное слово {wordFreeCellsInfo.Word.StringWord} , Модифицированное слово {modifiedWord}, поставленное слово {candidateWord.Word}");
 
@@ -74,6 +89,19 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
             }
 
             return false;
+        }
+
+        private int IsEnoughTiles(int remainedTiles, string modifiedWord)
+        {
+            int needPutTiles = 0;
+            foreach (var letter in modifiedWord)
+            {
+                if (letter.Equals('-'))
+                    continue;
+                needPutTiles++;
+            }
+
+            return remainedTiles - needPutTiles;
         }
 
         private void PlaceLettersOnGrid(string modifiedWord,
