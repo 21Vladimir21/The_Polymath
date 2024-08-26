@@ -9,8 +9,8 @@ namespace _Main._Scripts.GameLogic
     public class LetterTile : MonoBehaviour
     {
         public Action ReturnToPanel;
-        [field: SerializeField] public Letters Letter { get; private set; }
-        [SerializeField, Range(1, 10)] private int points;
+        [SerializeField] private LetterData letterData;
+        public Letters Letter => letterData.Letter;
         [SerializeField] private TMP_Text letterText;
         [SerializeField] private TMP_Text pointsText;
         [SerializeField] private RectTransform rectTransform;
@@ -19,8 +19,8 @@ namespace _Main._Scripts.GameLogic
         public Vector2Int TileCoordinates { get; private set; }
         public bool InRightWord { get; private set; }
         public bool CanMove { get; private set; } = true;
-        public string LetterString => Letter.ToString();
-        public int Points => points * _multiplierValue;
+        public string LetterString =>  letterData.Letter.ToString();
+        public int Points => letterData.Points * _multiplierValue;
         public RectTransform RectTransform => rectTransform;
 
         public void SetOnField(Vector2Int coordinates)
@@ -48,8 +48,8 @@ namespace _Main._Scripts.GameLogic
             if (letterText == null) letterText = GetComponentInChildren<TMP_Text>();
 
             letterText.text = LetterString;
-            if (LetterString == Letters.JackPot.ToString()) letterText.text = "*";
-            pointsText.text = points.ToString();
+            // if (LetterString == Letters.JackPot.ToString()) letterText.text = "*"; 
+            pointsText.text = letterData.Points.ToString();
 
             gameObject.name = "LetterTile " + Letter;
 

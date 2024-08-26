@@ -12,7 +12,8 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
 {
     public class FieldFacade
     {
-        public readonly UnityEvent<int> OnSuccessPlaceWord = new();
+        public readonly UnityEvent<int> OnDecreaseRemainingTiles = new();
+        public readonly UnityEvent<int> OnDecreaseRemainingPoints = new();
 
         private readonly PlayingField _playingField;
         private readonly FieldFreeSpaceHandler _fieldFreeSpaceHandler;
@@ -26,7 +27,7 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
         private const int MaxGridLength = 15;
 
         public FieldFacade(PlayingField playingField, GameData gameData, SortingDictionary dictionary,
-            LettersPool lettersPool)
+            LettersPool lettersPool, LettersDataHolder lettersDataHolder)
         {
             _playingField = playingField;
             _gameData = gameData;
@@ -34,7 +35,7 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
             _lettersPool = lettersPool;
             InitializeGrid();
             _fieldFreeSpaceHandler = new FieldFreeSpaceHandler(_grid, _playingField, _gameData);
-            _wordCreateHandler = new WordCreateHandler(_grid, dictionary, lettersPool,OnSuccessPlaceWord);
+            _wordCreateHandler = new WordCreateHandler(_grid, dictionary, lettersPool,OnDecreaseRemainingTiles,OnDecreaseRemainingPoints,lettersDataHolder);
             _wordSearchHandler = new WordSearchHandler(_grid);
         }
 
@@ -50,7 +51,7 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
         }
 
 
-        public async UniTask<bool> CheckAndPlaceWord(int remainedTiles)
+        public async UniTask<bool> CheckAndPlaceWord(int remainedTiles,int remainedPoints)
         {
             var freeSpaceInfos =
                 _fieldFreeSpaceHandler.TryGetWordFreeSpaceInfo();
@@ -62,7 +63,7 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
 
             foreach (var info in freeSpaceInfos)
             {
-                if (!await _wordCreateHandler.CanPlaceWord(info,remainedTiles)) continue;
+                if (!await _wordCreateHandler.CanPlaceWord(info,remainedTiles,remainedPoints)) continue;
                 UpdateFieldWords();
                 return true;
             }
@@ -70,7 +71,7 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
             return false;
         }
 
-        public async UniTask<bool> CheckAndPlaceWordFromLetter(int remainedTiles)
+        public async UniTask<bool> CheckAndPlaceWordFromLetter(int remainedTiles,int remainedPoints)
             //TODO:Наверное можно сделать generic класс и скоратить код до 1 метода 
         {
             var letterFreeSpaceInfos = _fieldFreeSpaceHandler.TryGetStartCells();
@@ -84,7 +85,7 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
             foreach (var space in letterFreeSpaceInfos)
                 // TODO: Добавить рандомный выьор первой точки , что бы бот не ставил в предсказуемое место 
             {
-                if (!await _wordCreateHandler.CanPlaceWord(space, remainedTiles)) continue;
+                if (!await _wordCreateHandler.CanPlaceWord(space, remainedTiles,remainedPoints)) continue;
                 UpdateFieldWords();
                 return true;
             }

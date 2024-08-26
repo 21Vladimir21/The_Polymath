@@ -92,6 +92,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: "LetterTile \u042A"
       objectReference: {fileID: 0}
+    - target: {fileID: 2342976653617159970, guid: 10932868d6c71264a955021b9837dec0, type: 3}
+      propertyPath: m_text
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 5224345239617402675, guid: 10932868d6c71264a955021b9837dec0, type: 3}
       propertyPath: m_text
       value: "\u042A"
@@ -100,6 +104,10 @@ PrefabInstance:
       propertyPath: letter
       value: 28
       objectReference: {fileID: 0}
+    - target: {fileID: 6614919132503852082, guid: 10932868d6c71264a955021b9837dec0, type: 3}
+      propertyPath: letterData
+      value: 
+      objectReference: {fileID: 11400000, guid: a0afdea5edfdc2241b7364da3cc83102, type: 2}
     - target: {fileID: 6614919132503852082, guid: 10932868d6c71264a955021b9837dec0, type: 3}
       propertyPath: <Letter>k__BackingField
       value: 28

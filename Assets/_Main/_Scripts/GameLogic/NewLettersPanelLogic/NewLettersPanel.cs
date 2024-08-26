@@ -70,7 +70,7 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
         {
             List<Letters> randomLettersArray = new();
             var letters = Enum.GetValues(typeof(Letters));
-            for (int i = 0; i <= count; i++)
+            for (int i = 0; i < count; i++)
             {
                 var randomIndex = Random.Range(0, letters.Length);
                 var randomLetter = (Letters)letters.GetValue(randomIndex);

@@ -19,7 +19,9 @@ namespace _Main._Scripts.DictionaryLogic
             for (int i = 0; i < lettersArray.Length - 1; i++)
             {
                 Letters letter = (Letters)lettersArray.GetValue(i);
-                if (letter is Letters.Ь or Letters.Ъ or Letters.Ы or Letters.JackPot) continue;
+                if (letter is Letters.Ь or Letters.Ъ or Letters.Ы 
+                    // or Letters.JackPot
+                    ) continue;
 
                 FirstLetterWordHolders.Add(new FirstLetterWordHolder(letter));
             }

@@ -92,6 +92,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: "LetterTile \u0410"
       objectReference: {fileID: 0}
+    - target: {fileID: 2342976653617159970, guid: 10932868d6c71264a955021b9837dec0, type: 3}
+      propertyPath: m_text
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6614919132503852082, guid: 10932868d6c71264a955021b9837dec0, type: 3}
+      propertyPath: letterData
+      value: 
+      objectReference: {fileID: 11400000, guid: b9fab453b4921954b9639ff6baa303f0, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

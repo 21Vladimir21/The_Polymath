@@ -16,18 +16,23 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
         private readonly PlayingFieldCell[,] _grid;
         private readonly SortingDictionary _dictionary;
         private readonly LettersPool _lettersPool;
-        private readonly UnityEvent<int> _onSuccessPlaceWord;
+        private readonly UnityEvent<int> _onDecreaseRemainingTiles;
+        private readonly UnityEvent<int> _onDecreaseRemainingPoints;
+        private readonly LettersDataHolder _lettersDataHolder;
 
         public WordCreateHandler(PlayingFieldCell[,] grid, SortingDictionary dictionary,
-            LettersPool lettersPool, UnityEvent<int> onSuccessPlaceWord)
+            LettersPool lettersPool, UnityEvent<int> onDecreaseRemainingTiles,
+            UnityEvent<int> onDecreaseRemainingPoints, LettersDataHolder lettersDataHolder)
         {
             _grid = grid;
             _dictionary = dictionary;
             _lettersPool = lettersPool;
-            _onSuccessPlaceWord = onSuccessPlaceWord;
+            _onDecreaseRemainingTiles = onDecreaseRemainingTiles;
+            _onDecreaseRemainingPoints = onDecreaseRemainingPoints;
+            _lettersDataHolder = lettersDataHolder;
         }
 
-        public async UniTask<bool> CanPlaceWord(LetterFreeSpaceInfo space, int remainedTiles)
+        public async UniTask<bool> CanPlaceWord(LetterFreeSpaceInfo space, int remainedTiles, int remainedPoints)
         {
             HashSet<int> usedLetterPositions = new();
 
@@ -48,12 +53,16 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
 
                     if (!CanFitWordInAvailableCells(modifiedWord, space.FreeCellsFromBeginningLetter,
                             space.FreeCellsFromEndLetter)) continue;
+                    
+                    if (!IsPointsWithinLimits(modifiedWord, ref remainedPoints, candidateWord.Word,
+                            space.IsHorizontal, space.LetterTile.TileCoordinates)) continue;
 
                     var letterTiles = TilesFounded(modifiedWord);
                     if (letterTiles == null) continue;
 
                     PlaceLettersOnGrid(modifiedWord, space.IsHorizontal, space.LetterTile.TileCoordinates, letterTiles);
-                    _onSuccessPlaceWord?.Invoke(remainingTilesNow);
+                    _onDecreaseRemainingTiles?.Invoke(remainingTilesNow);
+                    _onDecreaseRemainingPoints?.Invoke(remainedPoints);
                     Debug.Log(
                         $"Начальная буква {space.LetterTile.LetterString} , Модифицированное слово {modifiedWord}, поставленное слово {candidateWord.Word}");
                     return true;
@@ -63,7 +72,8 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
             return false;
         }
 
-        public async UniTask<bool> CanPlaceWord(WordFreeCellsInfo wordFreeCellsInfo, int remainedTiles)
+        public async UniTask<bool> CanPlaceWord(WordFreeCellsInfo wordFreeCellsInfo, int remainedTiles,
+            int remainedPoints)
         {
             var words = await _dictionary.GetWordsFromWordPart(wordFreeCellsInfo.Word.StringWord);
 
@@ -76,12 +86,16 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
 
                 if (!CanFitWordInAvailableCells(modifiedWord, wordFreeCellsInfo.FreeCellsFromBeginningWord,
                         wordFreeCellsInfo.FreeCellsFromEndWord)) continue;
+                if (!IsPointsWithinLimits(modifiedWord, ref remainedPoints, candidateWord.Word,
+                        wordFreeCellsInfo.Word.IsHorizontal, wordFreeCellsInfo.StartWordCoords)) continue;
 
                 var letterTiles = TilesFounded(modifiedWord);
                 if (letterTiles == null) continue;
 
                 PlaceLettersOnGrid(modifiedWord, wordFreeCellsInfo, letterTiles);
-                _onSuccessPlaceWord?.Invoke(remainingTilesNow);
+                _onDecreaseRemainingTiles?.Invoke(remainingTilesNow);
+                _onDecreaseRemainingPoints?.Invoke(remainedPoints);
+
                 Debug.Log(
                     $"Начальное слово {wordFreeCellsInfo.Word.StringWord} , Модифицированное слово {modifiedWord}, поставленное слово {candidateWord.Word}");
 
@@ -190,6 +204,56 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
             }
 
             return foundedTiles;
+        }
+
+        private bool IsPointsWithinLimits(string modifiedWord, ref int maxPoints, string newWord, bool isHorizontal,
+            Vector2Int startCoords)
+        {
+            var startLetterIndex = modifiedWord.IndexOf('-');
+
+            var newIndex = (isHorizontal ? startCoords.y : startCoords.x) - startLetterIndex;
+            var points = 0;
+            var wordMultiplication = 1;
+
+            for (int i = 0; i < newWord.Length; i++)
+            {
+                if (isHorizontal)
+                {
+                    var cell = _grid[startCoords.x, newIndex + i];
+                    WordMultiplication(newWord, cell, ref wordMultiplication, i, ref points);
+                }
+                else
+                {
+                    var cell = _grid[newIndex + i, startCoords.y];
+                    WordMultiplication(newWord, cell, ref wordMultiplication, i, ref points);
+                }
+            }
+
+            if (points <= maxPoints)
+            {
+                points *= wordMultiplication;
+                maxPoints -= points;
+                return true;
+            }
+
+            Debug.Log($"Слово {newWord} имеет {points * wordMultiplication} очков ");
+            return false;
+        }
+
+        private void WordMultiplication(string newWord, PlayingFieldCell cell, ref int wordMultiplication, int i,
+            ref int points)
+        {
+            if (cell.IsWordMultiplication)
+            {
+                wordMultiplication = cell.MultiplicationBonus;
+            }
+            else
+            {
+                var cellMultiplication = cell.MultiplicationBonus;
+                int letterPoints = 0;
+                if (_lettersDataHolder.TryGetLetterPoints(newWord[i], ref letterPoints))
+                    points += letterPoints * cellMultiplication;
+            }
         }
     }
 }

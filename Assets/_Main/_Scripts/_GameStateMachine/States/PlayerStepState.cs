@@ -57,7 +57,7 @@ namespace _Main._Scripts._GameStateMachine.States
 
             if (Input.GetKeyDown(KeyCode.P))
             {
-                _stateSwitcher.SwitchState<PCStepState>();
+                _stateSwitcher.SwitchState<BotStepState>();
             }
 
             if (Input.GetKeyDown(KeyCode.R))

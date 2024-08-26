@@ -3,6 +3,7 @@ using System.Linq;
 using _Main._Scripts._GameStateMachine.States;
 using _Main._Scripts.DictionaryLogic;
 using _Main._Scripts.GameDatas;
+using _Main._Scripts.GameLogic;
 using _Main._Scripts.GameLogic.NewLettersPanelLogic;
 using _Main._Scripts.GameLogic.PlayingFieldLogic;
 using _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic;
@@ -17,16 +18,16 @@ namespace _Main._Scripts._GameStateMachine
 
 
         public GameStateMachine(PlayingField playingField, NewLettersPanel newLettersPanel, LettersPool lettersPool,
-            SortingDictionary dictionary, DragAndDrop dragAndDrop)
+            SortingDictionary dictionary, DragAndDrop dragAndDrop,LettersDataHolder lettersDataHolder)
         {
             var gameData = new GameData();
-            var fieldFacade = new FieldFacade(playingField, gameData, dictionary, lettersPool);
+            var fieldFacade = new FieldFacade(playingField, gameData, dictionary, lettersPool,lettersDataHolder);
 
             _states = new List<IState>
             {
                 new EntryState(this, fieldFacade),
                 new PlayerStepState(this, newLettersPanel, lettersPool, dictionary, dragAndDrop, gameData, fieldFacade),
-                new PCStepState(this, fieldFacade),
+                new BotStepState(this, fieldFacade),
                 new MainMenuState()
             };
 

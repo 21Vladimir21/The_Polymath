@@ -224,8 +224,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0118f09770e002347be21354b0623137, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Letter>k__BackingField: 0
-  points: 1
+  letterData: {fileID: 11400000, guid: b9fab453b4921954b9639ff6baa303f0, type: 2}
   letterText: {fileID: 5224345239617402675}
   pointsText: {fileID: 2342976653617159970}
   rectTransform: {fileID: 895069604642342780}
@@ -294,7 +293,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 1
+  m_text: 0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: c1fdc4886e8fa0d4e8044ffec53a17ab, type: 2}
   m_sharedMaterial: {fileID: 2277012831615599939, guid: c1fdc4886e8fa0d4e8044ffec53a17ab, type: 2}
