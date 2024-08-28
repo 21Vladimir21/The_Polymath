@@ -12,25 +12,26 @@ namespace _Main._Scripts.GameLogic
     {
         private readonly SortingDictionary _dictionary;
         private readonly FieldFacade _fieldFacade;
-        private readonly GameData _gameData;
+        private readonly CurrentGameData _currentGameData;
         private readonly List<Word> _createdWords = new();
 
-        public WordValidationHandler(SortingDictionary dictionary,FieldFacade fieldFacade,GameData gameData)
+        public WordValidationHandler(SortingDictionary dictionary, FieldFacade fieldFacade,
+            CurrentGameData currentGameData)
         {
             _dictionary = dictionary;
             _fieldFacade = fieldFacade;
-            _gameData = gameData;
+            _currentGameData = currentGameData;
         }
 
 
-        public void CheckingGridForCorrectnessWords()
+        public void CheckingGridForCorrectnessWords(ref int points)
         {
             _createdWords.Clear();
             List<Word> words = _fieldFacade.GetWordsOnField();
 
             foreach (var word in words)
             {
-                if (IsWordValid(word))
+                if (IsWordValid(word) == ValidationResults.Success)
                 {
                     _fieldFacade.MarkTilesAsPartOfRightWord(word.Tiles);
                     _createdWords.Add(word);
@@ -38,26 +39,36 @@ namespace _Main._Scripts.GameLogic
                     Debug.Log(
                         $"Created word: |{word.StringWord}|, word points with multiplication - |{word.WordPoint}|");
                 }
-                else if (word.StringWord.Length > 1)
-                    Debug.Log($"Word |{word.StringWord}| not found or set not right");
+                else if (IsWordValid(word) == ValidationResults.SetNotRight && word.StringWord.Length > 1)
+                    Debug.Log($"Word |{word.StringWord}| set not right");
+                else if (IsWordValid(word) == ValidationResults.NotFound && word.StringWord.Length > 1)
+                    Debug.Log($"Word |{word.StringWord}| not found");
+                else if (IsWordValid(word) == ValidationResults.WordWasPosted && word.StringWord.Length > 1)
+                    Debug.Log($"Word |{word.StringWord}| was posed");
             }
 
-            var pointPerStep = CalculatePointsPointPerStep();
-            Debug.Log($"Points per step - {pointPerStep}");
+            points = CalculatePointsPointPerStep();
         }
 
-        private bool IsWordValid(Word word)
+        private ValidationResults IsWordValid(Word word)
         {
-            bool isNewWordInField = true;
-            foreach (var createdWord in _gameData.CreatedWords)
+            foreach (var createdWord in _currentGameData.CreatedWords)
                 if (string.Equals(createdWord.StringWord, word.StringWord, StringComparison.OrdinalIgnoreCase))
-                    isNewWordInField = false;
+                {
+                    if (createdWord.GetWordStartCoordinates == word.GetWordStartCoordinates)
+                        return ValidationResults.WordWasCreated;
+                    return ValidationResults.WordWasPosted;
+                }
 
             bool wordFits = word.Tiles.Any(tile => tile.InRightWord);
+            if (wordFits == false) return ValidationResults.SetNotRight;
+
+
             var foundWord = _dictionary.TryFoundWord(word.StringWord);
             bool wordExists = foundWord != null && !string.IsNullOrEmpty(foundWord.Word);
+            if (wordExists == false) return ValidationResults.NotFound;
 
-            return isNewWordInField && wordExists && wordFits;
+            return ValidationResults.Success;
         }
 
         private int CalculatePointsPointPerStep()
@@ -66,5 +77,14 @@ namespace _Main._Scripts.GameLogic
             foreach (var word in _createdWords) pointPerStep += word.WordPoint;
             return pointPerStep;
         }
+    }
+
+    public enum ValidationResults
+    {
+        SetNotRight,
+        NotFound,
+        WordWasPosted,
+        WordWasCreated,
+        Success,
     }
 }

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using _Main._Scripts._GameStateMachine.States;
+using _Main._Scripts.BotLogic;
 using _Main._Scripts.DictionaryLogic;
 using _Main._Scripts.GameDatas;
 using _Main._Scripts.GameLogic;
@@ -18,16 +19,17 @@ namespace _Main._Scripts._GameStateMachine
 
 
         public GameStateMachine(PlayingField playingField, NewLettersPanel newLettersPanel, LettersPool lettersPool,
-            SortingDictionary dictionary, DragAndDrop dragAndDrop,LettersDataHolder lettersDataHolder)
+            SortingDictionary dictionary, DragAndDrop dragAndDrop, LettersDataHolder lettersDataHolder,
+            BotComplexitySettings[] settingsArray)
         {
-            var gameData = new GameData();
-            var fieldFacade = new FieldFacade(playingField, gameData, dictionary, lettersPool,lettersDataHolder);
+            var gameData = new CurrentGameData();
+            var fieldFacade = new FieldFacade(playingField, gameData, dictionary, lettersPool, lettersDataHolder);
 
             _states = new List<IState>
             {
-                new EntryState(this, fieldFacade),
+                new EntryState(this, fieldFacade,gameData),
                 new PlayerStepState(this, newLettersPanel, lettersPool, dictionary, dragAndDrop, gameData, fieldFacade),
-                new BotStepState(this, fieldFacade),
+                new BotStepState(this, fieldFacade, settingsArray, gameData),
                 new MainMenuState()
             };
 

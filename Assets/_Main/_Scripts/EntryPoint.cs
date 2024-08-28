@@ -1,4 +1,7 @@
+using System;
+using System.Collections.Generic;
 using _Main._Scripts._GameStateMachine;
+using _Main._Scripts.BotLogic;
 using _Main._Scripts.DictionaryLogic;
 using _Main._Scripts.GameLogic;
 using _Main._Scripts.GameLogic.NewLettersPanelLogic;
@@ -20,6 +23,7 @@ namespace _Main._Scripts
         [SerializeField] private NewLettersPanel newLettersPanel;
         [SerializeField] private SortingDictionary dictionary;
         [SerializeField] private LettersDataHolder _lettersDataHolder;
+        [SerializeField] private List<BotComplexitySettings> _botComplexitySettings;
 
 
         private GameStateMachine _gameStateMachine;
@@ -33,12 +37,25 @@ namespace _Main._Scripts
         {
             _lettersPool = new LettersPool(_lettersPoolConfig, lettersParent);
             _gameStateMachine = new GameStateMachine(playingField, newLettersPanel, _lettersPool, dictionary,
-                dragAndDrop, _lettersDataHolder);
+                dragAndDrop, _lettersDataHolder, _botComplexitySettings.ToArray());
         }
 
         private void Update()
         {
             _gameStateMachine.Update();
         }
+
+#if UNITY_EDITOR
+
+        private const int MaxComplexitiesCount = 3;
+        private void OnValidate()
+        {
+            if (_botComplexitySettings.Count > MaxComplexitiesCount)
+            {
+                _botComplexitySettings.RemoveRange(MaxComplexitiesCount,
+                    _botComplexitySettings.Count - MaxComplexitiesCount);
+            }
+        }
+#endif
     }
 }

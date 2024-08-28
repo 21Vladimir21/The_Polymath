@@ -9,20 +9,20 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
     {
         private readonly PlayingFieldCell[,] _grid;
         private readonly PlayingField _playingField;
-        private GameData _gameData;
+        private CurrentGameData _currentGameData;
 
-        public FieldFreeSpaceHandler(PlayingFieldCell[,] grid,PlayingField playingField, GameData gameData)
+        public FieldFreeSpaceHandler(PlayingFieldCell[,] grid,PlayingField playingField, CurrentGameData currentGameData)
         {
             _grid = grid;
             _playingField = playingField;
-            _gameData = gameData;
+            _currentGameData = currentGameData;
         }
 
 
         public List<WordFreeCellsInfo> TryGetWordFreeSpaceInfo()
         {
             List<WordFreeCellsInfo> infos = new();
-            foreach (var word in _gameData.CreatedWords)
+            foreach (var word in _currentGameData.CreatedWords)
             {
                 if (word.IsHorizontal)
                 {
@@ -124,7 +124,7 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
         public List<LetterFreeSpaceInfo> TryGetStartCells()
         {
             List<LetterFreeSpaceInfo> freeSpaceInfos = new();
-            foreach (var createdWord in _gameData.CreatedWords)
+            foreach (var createdWord in _currentGameData.CreatedWords)
             {
                 foreach (var tile in createdWord.Tiles)
                 {

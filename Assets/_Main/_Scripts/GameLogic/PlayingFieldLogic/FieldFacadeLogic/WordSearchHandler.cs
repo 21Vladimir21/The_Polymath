@@ -60,7 +60,7 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
             return indexes;
         }
 
-        public List<Word> CreateAWords(Vector2 index, CheckingFieldDirection checkDirection)
+        public List<Word> CreateAWords(Vector2Int index, CheckingFieldDirection checkDirection)
         {
             List<Word> createdWords = new();
             Word horizontalWordResult;
@@ -91,8 +91,8 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
 
             return createdWords;
         }
-        
-        private Word BuildWordFromGridCells(bool checkFromHorizontal, Vector2 startIndex)
+
+        private Word BuildWordFromGridCells(bool checkFromHorizontal, Vector2Int startIndex)
         {
             List<LetterTile> currentWordTiles = new();
 
@@ -100,8 +100,8 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
 
             CalculateTilePoints(startIndex, currentWordTiles, ref wordMultiplicationValue);
 
-            Vector2 index = startIndex;
-            int cycleIndex = checkFromHorizontal ? (int)index.y : (int)index.x;
+            Vector2Int index = startIndex;
+            int cycleIndex = checkFromHorizontal ? index.y : index.x;
 
             if (checkFromHorizontal)
                 index.y += 1;
@@ -110,7 +110,7 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
 
             while (cycleIndex < _grid.GetLength(checkFromHorizontal ? 0 : 1) - 1)
             {
-                var gameFieldSell = _grid[(int)index.x, (int)index.y];
+                var gameFieldSell = _grid[index.x, index.y];
                 if (gameFieldSell.IsBusy)
                     CalculateTilePoints(index, currentWordTiles, ref wordMultiplicationValue);
                 else
@@ -126,18 +126,25 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
                 ? new Word(currentWordTiles, checkFromHorizontal, wordMultiplicationValue)
                 : null;
         }
-        
-        private void CalculateTilePoints(Vector2 startIndex, List<LetterTile> currentWordTiles,
+
+        private void CalculateTilePoints(Vector2Int startIndex, List<LetterTile> currentWordTiles,
             ref int wordMultiplicationValue)
         {
-            var gameFieldSell = _grid[(int)startIndex.x, (int)startIndex.y];
-            var currentTile = gameFieldSell.CurrentTile;
+            var cell = _grid[startIndex.x, startIndex.y];
+            var currentTile = cell.CurrentTile;
 
             if (currentTile == null) return;
-            if (gameFieldSell.MultiplicationBonus > 1 && !gameFieldSell.IsWordMultiplication)
-                currentTile.SetMultiplicationValue(gameFieldSell.MultiplicationBonus);
-            else
-                wordMultiplicationValue *= gameFieldSell.MultiplicationBonus;
+            if (cell.WasUsed == false && cell.MultiplicationBonus > 1 && !cell.IsWordMultiplication)
+            {
+                currentTile.SetMultiplicationValue(cell.MultiplicationBonus);
+                cell.WasUsed = true;
+            }
+            else if (cell.WasUsed == false)
+            {
+                wordMultiplicationValue *= cell.MultiplicationBonus;
+                cell.WasUsed = true;
+            }
+
             currentWordTiles.Add(currentTile);
         }
     }

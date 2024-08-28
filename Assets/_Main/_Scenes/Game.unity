@@ -16705,6 +16705,10 @@ MonoBehaviour:
   newLettersPanel: {fileID: 1486859192}
   dictionary: {fileID: 11400000, guid: 5f611e18c07697a46bbe64412ff24095, type: 2}
   _lettersDataHolder: {fileID: 11400000, guid: d9c771a4a0a1a75479e02eebc6097621, type: 2}
+  _botComplexitySettings:
+  - {fileID: 11400000, guid: 0c0ac40c41bb85e40a929bbdebea5130, type: 2}
+  - {fileID: 11400000, guid: 074b62d95dbd6a84ba72a4719c36ad95, type: 2}
+  - {fileID: 11400000, guid: 83c893a99d165ff43962bec1d4495dd4, type: 2}
   _lettersPoolConfig: {fileID: 11400000, guid: 4f2f0a481a6bac540a961b880bbcbb93, type: 2}
 --- !u!4 &1296094038
 Transform:
