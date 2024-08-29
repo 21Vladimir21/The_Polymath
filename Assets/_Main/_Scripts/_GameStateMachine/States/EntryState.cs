@@ -20,8 +20,9 @@ namespace _Main._Scripts._GameStateMachine.States
 
         public void Enter()
         {
+            _fieldFacade.ClearField();
             _fieldFacade.CreateRandomStartWord();
-            _currentGameData.SetComplexity(BotComplexity.Hard);
+            _currentGameData.SetComplexity(BotComplexity.Easy);
             _stateSwitcher.SwitchState<PlayerStepState>();
         }
 

@@ -94,7 +94,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2342976653617159970, guid: 10932868d6c71264a955021b9837dec0, type: 3}
       propertyPath: m_text
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6614919132503852082, guid: 10932868d6c71264a955021b9837dec0, type: 3}
       propertyPath: letterData

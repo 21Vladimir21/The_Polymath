@@ -11,6 +11,10 @@ namespace _Main._Scripts.GameDatas
         public int PlayerPoints;
         public int PCPoints;
 
+        private const int PointsToWin = 50;
+
+        public bool HasBeenRequiredPoints => PlayerPoints >= PointsToWin || PCPoints >= PointsToWin;
+
         public void AddNewWords(List<Word> words)
         {
             CreatedWords.Clear();

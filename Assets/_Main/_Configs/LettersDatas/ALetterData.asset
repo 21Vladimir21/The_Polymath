@@ -12,3 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6b2ca3d374be4232a5507c339bd8633a, type: 3}
   m_Name: ALetterData
   m_EditorClassIdentifier: 
+  <Letter>k__BackingField: 0
+  <Points>k__BackingField: 1

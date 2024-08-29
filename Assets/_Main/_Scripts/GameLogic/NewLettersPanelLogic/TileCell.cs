@@ -26,7 +26,6 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
 
         public void ClearTileData()
         {
-            Debug.Log($"Tile{CurrentTile.LetterString} deleted from cell");
             CurrentTile = null;
             IsBusy = false;
         }

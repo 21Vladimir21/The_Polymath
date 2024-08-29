@@ -53,6 +53,21 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
             }
         }
 
+        public void ClearField()
+        {
+            foreach (var cell in _playingField.Cells)
+            {
+                if (cell.IsBusy)
+                {
+                    var tile = cell.CurrentTile;
+                    tile.ResetTile();
+                    _lettersPool.ReturnTile(tile);
+                    cell.ClearTileData();
+                }
+            }
+            
+        }
+
 
         public async UniTask<bool> CheckAndPlaceWord(int remainedTiles, int remainedPoints)
         {

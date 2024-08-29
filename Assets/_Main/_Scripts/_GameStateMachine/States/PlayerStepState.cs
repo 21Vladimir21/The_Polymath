@@ -17,23 +17,23 @@ namespace _Main._Scripts._GameStateMachine.States
         private readonly IStateSwitcher _stateSwitcher;
         private readonly NewLettersPanel _newLettersPanel;
         private readonly DragAndDrop _dragAndDrop;
-        private readonly CurrentGameData _currentGameData;
+        private readonly CurrentGameData _gameData;
         private readonly FieldFacade _fieldFacade;
         private readonly WordValidationHandler _wordValidationHandler;
 
         public PlayerStepState(IStateSwitcher stateSwitcher, NewLettersPanel newLettersPanel,
             LettersPool lettersPool, SortingDictionary dictionary, DragAndDrop dragAndDrop,
-            CurrentGameData currentGameData,
+            CurrentGameData gameData,
             FieldFacade fieldFacade)
         {
             _stateSwitcher = stateSwitcher;
             _newLettersPanel = newLettersPanel;
             _dragAndDrop = dragAndDrop;
-            _currentGameData = currentGameData;
+            _gameData = gameData;
             _fieldFacade = fieldFacade;
 
             _newLettersPanel.Initialize(lettersPool);
-            _wordValidationHandler = new WordValidationHandler(dictionary, fieldFacade, currentGameData);
+            _wordValidationHandler = new WordValidationHandler(dictionary, fieldFacade, gameData);
         }
 
         public void Enter()
@@ -44,7 +44,7 @@ namespace _Main._Scripts._GameStateMachine.States
 
         public void Exit()
         {
-            _newLettersPanel.ReturnNotRightTiles();
+            _newLettersPanel.ReturnNotRightTilesToPanel();
             _fieldFacade.ClearNotRightTiles();
             _dragAndDrop.CanDrag = false;
             _fieldFacade.UpdateFieldWords();
@@ -53,7 +53,7 @@ namespace _Main._Scripts._GameStateMachine.States
             int points = 0;
             _wordValidationHandler.CheckingGridForCorrectnessWords(ref points);
             Debug.Log($"Очки за ход: {points}");
-            _currentGameData.PlayerPoints += points;
+            _gameData.PlayerPoints += points;
         }
 
         public void Update()
@@ -67,7 +67,10 @@ namespace _Main._Scripts._GameStateMachine.States
 
             if (Input.GetKeyDown(KeyCode.P))
             {
-                _stateSwitcher.SwitchState<BotStepState>();
+                if (_gameData.HasBeenRequiredPoints)
+                    _stateSwitcher.SwitchState<ResultState>();
+                else
+                    _stateSwitcher.SwitchState<BotStepState>();
             }
 
             if (Input.GetKeyDown(KeyCode.R))

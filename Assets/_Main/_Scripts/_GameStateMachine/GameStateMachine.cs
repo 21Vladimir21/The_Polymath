@@ -30,6 +30,7 @@ namespace _Main._Scripts._GameStateMachine
                 new EntryState(this, fieldFacade,gameData),
                 new PlayerStepState(this, newLettersPanel, lettersPool, dictionary, dragAndDrop, gameData, fieldFacade),
                 new BotStepState(this, fieldFacade, settingsArray, gameData),
+                new ResultState(this,gameData,newLettersPanel),
                 new MainMenuState()
             };
 

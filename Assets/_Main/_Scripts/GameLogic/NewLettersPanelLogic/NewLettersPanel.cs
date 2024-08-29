@@ -38,13 +38,26 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
             }
         }
 
-        public void ReturnNotRightTiles()
+        public void ReturnNotRightTilesToPanel()
         {
             foreach (var cell in cells)
             {
                 if (cell.IsBusy || cell.LastTile.InRightWord)
                     continue;
                 ReturnTileToFreeCell(cell.LastTile);
+            }
+        }
+
+        public void ReturnAllTilesToPool()
+        {
+            foreach (var cell in cells)
+            {
+                if(!cell.IsBusy) continue;
+                
+                var tile = cell.CurrentTile;
+                tile.ResetTile();
+                _lettersPool.ReturnTile(tile);
+                cell.ClearTileData();
             }
         }
 

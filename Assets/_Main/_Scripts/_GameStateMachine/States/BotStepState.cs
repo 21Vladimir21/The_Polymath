@@ -28,12 +28,12 @@ namespace _Main._Scripts._GameStateMachine.States
             _fieldFacade.OnDecreaseRemainingPoints.AddListener(UpdateRemainingPoints);
         }
 
-        public void Enter()
+        public async void Enter()
         {
             SetComplexity();
             SetRemainedPoints();
             SetRemainedTiles();
-
+            PlaceWords();
 
             //TODO: Добавить проверку на то сколько осталось плиток в пуле 
         }
@@ -43,27 +43,32 @@ namespace _Main._Scripts._GameStateMachine.States
             Debug.Log($"Очки бота: {_gameData.PCPoints}");
         }
 
-        public async void Update()
+        public void Update()
         {
-            if (Input.GetKeyDown(KeyCode.N))
+        }
+
+        private async void PlaceWords()
+        {
+            var value = Random.Range(0, 2);
+            if (value == 0)
             {
                 while (true)
                     if (await _fieldFacade.CheckAndPlaceWord(_remainedTiles, _remainedPoints) == false ||
                         _remainedTiles <= 0)
                         break;
-
-                _stateSwitcher.SwitchState<PlayerStepState>();
             }
-
-            if (Input.GetKeyDown(KeyCode.M))
+            else
             {
                 while (true)
                     if (await _fieldFacade.CheckAndPlaceWordFromLetter(_remainedTiles, _remainedPoints) == false ||
                         _remainedTiles <= 0)
                         break;
-
-                _stateSwitcher.SwitchState<PlayerStepState>();
             }
+
+            if (_gameData.HasBeenRequiredPoints)
+                _stateSwitcher.SwitchState<ResultState>();
+            else
+                _stateSwitcher.SwitchState<PlayerStepState>();
         }
 
         private void SetComplexity(bool setForce = false)
