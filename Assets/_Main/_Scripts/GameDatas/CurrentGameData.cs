@@ -11,7 +11,7 @@ namespace _Main._Scripts.GameDatas
         public int PlayerPoints;
         public int PCPoints;
 
-        private const int PointsToWin = 50;
+        private const int PointsToWin = 200;
 
         public bool HasBeenRequiredPoints => PlayerPoints >= PointsToWin || PCPoints >= PointsToWin;
 

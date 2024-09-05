@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using _Main._Scripts.GameLogic.LettersLogic;
 using _Main._Scripts.LetterPooLogic;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -23,7 +24,7 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
             var randomLetters = CreateRandomLettersList(freeCells.Count);
             for (int i = 0; i < freeCells.Count; i++)
             {
-                var tile = _lettersPool.GetTile(randomLetters[i]);
+                var tile = _lettersPool.GetRandomTile();
                 freeCells[i].AddTileAndAllowMove(tile);
             }
         }
@@ -60,7 +61,6 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
                 cell.ClearTileData();
             }
         }
-
         private List<NewLetterPanelCell> GetFreeCells()
         {
             List<NewLetterPanelCell> freeCells = new();
@@ -73,7 +73,7 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
             return freeCells;
         }
 
-        private void ReturnTileToFreeCell(LetterTile tile)
+        public void ReturnTileToFreeCell(LetterTile tile)
         {
             var freeCells = GetFreeCells();
             freeCells[0].AddTileAndAllowMove(tile);

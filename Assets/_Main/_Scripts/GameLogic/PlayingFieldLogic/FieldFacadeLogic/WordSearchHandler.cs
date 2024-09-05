@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using _Main._Scripts.GameLogic.LettersLogic;
 using UnityEngine;
 
 namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
@@ -138,6 +139,7 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
             {
                 currentTile.SetMultiplicationValue(cell.MultiplicationBonus);
                 cell.WasUsed = true;
+              
             }
             else if (cell.WasUsed == false)
             {

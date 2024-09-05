@@ -1,11 +1,13 @@
 using System.Collections.Generic;
+using _Main._Scripts.GameLogic.LettersLogic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 namespace _Main._Scripts.GameLogic
 {
     public class Word
     {
-        public readonly List<LetterTile> Tiles;
+        public  List<LetterTile> Tiles;
         private int _wordPointsMultiplierValue = 1;
 
 
@@ -14,6 +16,11 @@ namespace _Main._Scripts.GameLogic
             Tiles = tiles;
             _wordPointsMultiplierValue = multiplierValue;
             IsHorizontal = isHorizontal;
+            foreach (var tile in tiles)
+            {
+                tile.OnSwapped.RemoveAllListeners();
+                tile.OnSwapped.AddListener(SwapTile);
+            }
         }
 
         public bool IsHorizontal { get; private set; }
@@ -38,6 +45,21 @@ namespace _Main._Scripts.GameLogic
                 foreach (var tile in Tiles) points += tile.Points;
                 return points * _wordPointsMultiplierValue;
             }
+        }
+
+        public void MarkTilesInWord()
+        {
+            foreach (var tile in Tiles) tile.SetInWord();
+        }
+        
+        private void SwapTile(LetterTile tile,LetterTile newTile)
+        {
+            Debug.Log($"Swap tile {tile.name} to {newTile.name}");
+            var indexOf = Tiles.IndexOf(tile);
+            Tiles.RemoveAt(indexOf);
+            Tiles.Insert(indexOf,newTile);
+            newTile.SetInWord();
+            tile.OnSwapped.RemoveAllListeners();
         }
     }
 }

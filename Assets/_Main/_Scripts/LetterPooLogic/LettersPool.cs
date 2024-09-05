@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
 using _Main._Scripts.GameLogic;
+using _Main._Scripts.GameLogic.LettersLogic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 using Object = UnityEngine.Object;
+using Random = UnityEngine.Random;
 
 namespace _Main._Scripts.LetterPooLogic
 {
@@ -48,6 +51,18 @@ namespace _Main._Scripts.LetterPooLogic
                 }
 
             return null;
+        }
+
+        public LetterTile GetRandomTile()
+        {
+            while (true)
+            {
+                var randomIndex = Random.Range(0, _spawnedTiles.Count);
+                if (_spawnedTiles[randomIndex].gameObject.activeSelf) continue;
+                var tile = _spawnedTiles[randomIndex];
+                tile.gameObject.SetActive(true);
+                return tile;
+            }
         }
 
         public void ReturnTile(LetterTile tile) => tile.gameObject.SetActive(false);

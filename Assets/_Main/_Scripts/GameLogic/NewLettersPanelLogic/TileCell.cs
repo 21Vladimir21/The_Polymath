@@ -1,3 +1,4 @@
+using _Main._Scripts.GameLogic.LettersLogic;
 using UnityEngine;
 
 namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
@@ -7,8 +8,8 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
         public bool IsBusy { get; private set; }
         public LetterTile CurrentTile { get; private set; }
 
-        private Vector2Int _coords;
-        public void SetCellCoords(int x,int y) => _coords =  new Vector2Int(x,y);
+        protected Vector2Int Coords;
+        public void SetCellCoords(int x,int y) => Coords =  new Vector2Int(x,y);
 
 
         public virtual void AddTileAndAllowMove(LetterTile tile)
@@ -19,7 +20,6 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
         public void AddTile(LetterTile tile)
         {
             CurrentTile = tile;
-            CurrentTile.SetOnField(_coords);
             IsBusy = true;
             ResetTilePosition();
         }
@@ -30,6 +30,6 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
             IsBusy = false;
         }
 
-        public void ResetTilePosition() => CurrentTile.transform.position = transform.position;
+        public virtual void ResetTilePosition() => CurrentTile.transform.position = transform.position;
     }
 }

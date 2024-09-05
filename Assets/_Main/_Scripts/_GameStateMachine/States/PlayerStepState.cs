@@ -7,6 +7,9 @@ using _Main._Scripts.GameLogic;
 using _Main._Scripts.GameLogic.NewLettersPanelLogic;
 using _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic;
 using _Main._Scripts.LetterPooLogic;
+using _Main._Scripts.Services;
+using _Main._Scripts.UI;
+using _Main._Scripts.UI.Views;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -20,6 +23,7 @@ namespace _Main._Scripts._GameStateMachine.States
         private readonly CurrentGameData _gameData;
         private readonly FieldFacade _fieldFacade;
         private readonly WordValidationHandler _wordValidationHandler;
+        private InGameView _inGameView;
 
         public PlayerStepState(IStateSwitcher stateSwitcher, NewLettersPanel newLettersPanel,
             LettersPool lettersPool, SortingDictionary dictionary, DragAndDrop dragAndDrop,
@@ -34,6 +38,15 @@ namespace _Main._Scripts._GameStateMachine.States
 
             _newLettersPanel.Initialize(lettersPool);
             _wordValidationHandler = new WordValidationHandler(dictionary, fieldFacade, gameData);
+
+            dragAndDrop.OnSwappedTiles += _newLettersPanel.ReturnTileToFreeCell;
+
+            var locator = ServiceLocator.Instance.GetServiceByType<UILocator>();
+            _inGameView = locator.GetViewByType<InGameView>();
+
+            _inGameView.CheckWordsButton.onClick.AddListener(ValidateNewWords);
+            _inGameView.ReturnLettersToPanelButton.onClick.AddListener(ReturnLettersToPanel);
+            _inGameView.EndStepButton.onClick.AddListener(EndStep);
         }
 
         public void Enter()
@@ -44,40 +57,46 @@ namespace _Main._Scripts._GameStateMachine.States
 
         public void Exit()
         {
+            int points = 0;
+            _wordValidationHandler.CheckingGridForCorrectnessWords(ref points,true);
+            Debug.Log($"Очки за ход: {points}");
+            
             _newLettersPanel.ReturnNotRightTilesToPanel();
             _fieldFacade.ClearNotRightTiles();
             _dragAndDrop.CanDrag = false;
             _fieldFacade.UpdateFieldWords();
             _newLettersPanel.SetNewLettersInPanel();
 
-            int points = 0;
-            _wordValidationHandler.CheckingGridForCorrectnessWords(ref points);
-            Debug.Log($"Очки за ход: {points}");
             _gameData.PlayerPoints += points;
         }
 
         public void Update()
         {
-            if (Input.GetKeyDown(KeyCode.A))
-            {
-                int points = 0;
-                _wordValidationHandler.CheckingGridForCorrectnessWords(ref points);
-                Debug.Log($"Очки: {points}");
-            }
-
-            if (Input.GetKeyDown(KeyCode.P))
-            {
-                if (_gameData.HasBeenRequiredPoints)
-                    _stateSwitcher.SwitchState<ResultState>();
-                else
-                    _stateSwitcher.SwitchState<BotStepState>();
-            }
-
             if (Input.GetKeyDown(KeyCode.R))
             {
-                _newLettersPanel.ReturnAllTilesIntoCells();
-                _fieldFacade.ClearMovableTiles();
+                _fieldFacade.CreateRandomStartWord();
             }
+        }
+
+        private void EndStep()
+        {
+            if (_gameData.HasBeenRequiredPoints)
+                _stateSwitcher.SwitchState<ResultState>();
+            else
+                _stateSwitcher.SwitchState<BotStepState>();
+        }
+
+        private void ReturnLettersToPanel()
+        {
+            _newLettersPanel.ReturnAllTilesIntoCells();
+            _fieldFacade.ClearMovableTiles();
+        }
+
+        private void ValidateNewWords()
+        {
+            int points = 0;
+            _wordValidationHandler.CheckingGridForCorrectnessWords(ref points,false);
+            Debug.Log($"Очки: {points}");
         }
     }
 }

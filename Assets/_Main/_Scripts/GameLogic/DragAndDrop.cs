@@ -1,3 +1,6 @@
+using System;
+using _Main._Scripts.GameLogic.JackPotLogic;
+using _Main._Scripts.GameLogic.LettersLogic;
 using _Main._Scripts.GameLogic.NewLettersPanelLogic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -11,9 +14,9 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private RectTransform _draggedObject;
     private TileCell _startDragCell;
     private TileCell _selectedCell;
-    private TileCell _lastSelectedCell;
 
     private bool _isDragged;
+    public Action<LetterTile> OnSwappedTiles;
 
     public bool CanDrag { get; set; }
 
@@ -45,20 +48,28 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         _startDragCell = cell;
         var cellCurrentTile = cell.CurrentTile;
         cellCurrentTile.ResetTile();
+        cellCurrentTile.UpTile();
         _draggedObject = cellCurrentTile.RectTransform;
         _isDragged = true;
     }
 
-    private void SelectNewCell(TileCell cell)
-    {
-        _selectedCell = cell;
-        _lastSelectedCell = cell;
-    }
+    private void SelectNewCell(TileCell cell) => _selectedCell = cell;
 
     private void ResetDrag()
     {
         if (_selectedCell != null && _selectedCell.IsBusy == false)
             RearrangeTile();
+        else if (_selectedCell != null && _startDragCell != _selectedCell && _selectedCell.IsBusy &&
+                 _selectedCell.CurrentTile is JackPotTile)
+        {
+            Debug.Log($"SwapTiles");
+            var jackPotTile = _selectedCell.CurrentTile;
+            _selectedCell.CurrentTile.OnSwapped?.Invoke(jackPotTile, _startDragCell.CurrentTile);
+            _selectedCell.ClearTileData();
+            _selectedCell.AddTile(_startDragCell.CurrentTile);
+            _startDragCell.ClearTileData();
+            OnSwappedTiles.Invoke(jackPotTile);
+        }
         else if (_draggedObject != null) _startDragCell.ResetTilePosition();
 
         ClearDragState();
@@ -72,7 +83,6 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     private void ClearDragState()
     {
-        _lastSelectedCell = null;
         _startDragCell = null;
         _draggedObject = null;
         _selectedCell = null;

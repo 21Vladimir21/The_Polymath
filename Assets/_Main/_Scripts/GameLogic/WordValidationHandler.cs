@@ -24,7 +24,7 @@ namespace _Main._Scripts.GameLogic
         }
 
 
-        public void CheckingGridForCorrectnessWords(ref int points)
+        public void CheckingGridForCorrectnessWords(ref int points, bool endStep)
         {
             _createdWords.Clear();
             List<Word> words = _fieldFacade.GetWordsOnField();
@@ -34,6 +34,8 @@ namespace _Main._Scripts.GameLogic
                 if (IsWordValid(word) == ValidationResults.Success)
                 {
                     _fieldFacade.MarkTilesAsPartOfRightWord(word.Tiles);
+                    if (endStep)
+                        word.MarkTilesInWord();
                     _createdWords.Add(word);
                     //TODO:Хрень для дебага
                     Debug.Log(

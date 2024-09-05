@@ -4,6 +4,7 @@ using System.Linq;
 using _Main._Scripts._GameStateMachine.States;
 using _Main._Scripts.DictionaryLogic;
 using _Main._Scripts.GameDatas;
+using _Main._Scripts.GameLogic.LettersLogic;
 using _Main._Scripts.LetterPooLogic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -156,10 +157,14 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
                     if (!string.Equals(tile.LetterString, modifiedWord[i].ToString(),
                             StringComparison.OrdinalIgnoreCase)) continue;
 
+                    Vector2Int coords;
                     if (isHorizontal)
-                        _grid[startCoords.x, newIndex].AddTile(tile);
+                        coords = new Vector2Int(startCoords.x, newIndex);
                     else
-                        _grid[newIndex, startCoords.y].AddTile(tile);
+                        coords = new Vector2Int(newIndex, startCoords.y);
+
+                    _grid[coords.x, coords.y].AddTile(tile);
+                    tile.SetInWord();
 
                     tiles.Remove(tile);
                     break;

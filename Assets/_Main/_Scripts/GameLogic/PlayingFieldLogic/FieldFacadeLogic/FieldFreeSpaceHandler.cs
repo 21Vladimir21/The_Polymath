@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using _Main._Scripts._GameStateMachine.States;
 using _Main._Scripts.GameDatas;
+using _Main._Scripts.GameLogic.LettersLogic;
 using UnityEngine;
 
 namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic

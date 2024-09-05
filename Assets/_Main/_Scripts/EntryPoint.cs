@@ -7,6 +7,8 @@ using _Main._Scripts.GameLogic;
 using _Main._Scripts.GameLogic.NewLettersPanelLogic;
 using _Main._Scripts.GameLogic.PlayingFieldLogic;
 using _Main._Scripts.LetterPooLogic;
+using _Main._Scripts.Services;
+using _Main._Scripts.UI;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -24,6 +26,8 @@ namespace _Main._Scripts
         [SerializeField] private SortingDictionary dictionary;
         [SerializeField] private LettersDataHolder _lettersDataHolder;
         [SerializeField] private List<BotComplexitySettings> _botComplexitySettings;
+        [SerializeField] private UIViewsHolder uiViewsHolder;
+        
 
 
         private GameStateMachine _gameStateMachine;
@@ -35,6 +39,9 @@ namespace _Main._Scripts
 
         private void Awake()
         {
+            var uiLocator = new UILocator(uiViewsHolder);
+            ServiceLocator.Instance.TryAddService(uiLocator);
+            
             _lettersPool = new LettersPool(_lettersPoolConfig, lettersParent);
             _gameStateMachine = new GameStateMachine(playingField, newLettersPanel, _lettersPool, dictionary,
                 dragAndDrop, _lettersDataHolder, _botComplexitySettings.ToArray());

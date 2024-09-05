@@ -143,10 +143,10 @@ MonoBehaviour:
     <Count>k__BackingField: 3
   - name: JackPot
     <Letter>k__BackingField: 32
-    <TilePrefab>k__BackingField: {fileID: 4739130988131852956, guid: e5507f1c6feadcf42bead0fae587e512, type: 3}
+    <TilePrefab>k__BackingField: {fileID: 2974277255201074202, guid: e5507f1c6feadcf42bead0fae587e512, type: 3}
     <Count>k__BackingField: 10
   tilePrefabs:
-  - {fileID: 4739130988131852956, guid: e5507f1c6feadcf42bead0fae587e512, type: 3}
+  - {fileID: 2974277255201074202, guid: e5507f1c6feadcf42bead0fae587e512, type: 3}
   - {fileID: 8197863872722855875, guid: 264604f1e99921744a1fd20173c5aa32, type: 3}
   - {fileID: 2160314041896178044, guid: e4f2c6a81f2a4b24881a987323c17f2a, type: 3}
   - {fileID: 875366238618523909, guid: 9c6d83cdac829dc44a6f3139ff800f98, type: 3}
