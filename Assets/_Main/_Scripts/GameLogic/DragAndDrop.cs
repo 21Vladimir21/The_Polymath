@@ -60,19 +60,32 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         if (_selectedCell != null && _selectedCell.IsBusy == false)
             RearrangeTile();
         else if (_selectedCell != null && _startDragCell != _selectedCell && _selectedCell.IsBusy &&
+                 _selectedCell.CurrentTile.CanMove)
+            SwapTiles();
+        else if (_selectedCell != null && _startDragCell != _selectedCell && _selectedCell.IsBusy &&
                  _selectedCell.CurrentTile is JackPotTile)
-        {
-            Debug.Log($"SwapTiles");
-            var jackPotTile = _selectedCell.CurrentTile;
-            _selectedCell.CurrentTile.OnSwapped?.Invoke(jackPotTile, _startDragCell.CurrentTile);
-            _selectedCell.ClearTileData();
-            _selectedCell.AddTile(_startDragCell.CurrentTile);
-            _startDragCell.ClearTileData();
-            OnSwappedTiles.Invoke(jackPotTile);
-        }
+            SwapJackPotTile();
         else if (_draggedObject != null) _startDragCell.ResetTilePosition();
 
         ClearDragState();
+    }
+
+    private void SwapJackPotTile()
+    {
+        var jackPotTile = _selectedCell.CurrentTile;
+        _selectedCell.CurrentTile.OnSwapped?.Invoke(jackPotTile, _startDragCell.CurrentTile);
+        _selectedCell.ClearTileData();
+        _selectedCell.AddTile(_startDragCell.CurrentTile);
+        _startDragCell.ClearTileData();
+        OnSwappedTiles.Invoke(jackPotTile);
+    }
+
+    private void SwapTiles()
+    {
+        var tile = _selectedCell.CurrentTile;
+        _selectedCell.ClearTileData();
+        RearrangeTile();
+        _startDragCell.AddTileAndAllowMove(tile);
     }
 
     private void RearrangeTile()

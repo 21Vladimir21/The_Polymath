@@ -47,6 +47,7 @@ namespace _Main._Scripts._GameStateMachine.States
             _inGameView.CheckWordsButton.onClick.AddListener(ValidateNewWords);
             _inGameView.ReturnLettersToPanelButton.onClick.AddListener(ReturnLettersToPanel);
             _inGameView.EndStepButton.onClick.AddListener(EndStep);
+            _inGameView.MixTilesButton.onClick.AddListener(newLettersPanel.MixTheTiles);
         }
 
         public void Enter()

@@ -18,14 +18,25 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
             _lettersPool = lettersPool;
         }
 
+        public void SwapTiles()
+        {
+            foreach (var cell in cells)
+                if (cell.IsBusy)
+                {
+                    _lettersPool.ReturnTile(cell.CurrentTile);
+                    cell.ClearTileData();
+                }
+            
+            SetNewLettersInPanel();
+        }
+
         public void SetNewLettersInPanel()
         {
             var freeCells = GetFreeCells();
-            var randomLetters = CreateRandomLettersList(freeCells.Count);
-            for (int i = 0; i < freeCells.Count; i++)
+            foreach (var cell in freeCells)
             {
                 var tile = _lettersPool.GetRandomTile();
-                freeCells[i].AddTileAndAllowMove(tile);
+                cell.AddTileAndAllowMove(tile);
             }
         }
 
@@ -53,14 +64,34 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
         {
             foreach (var cell in cells)
             {
-                if(!cell.IsBusy) continue;
-                
+                if (!cell.IsBusy) continue;
+
                 var tile = cell.CurrentTile;
                 tile.ResetTile();
                 _lettersPool.ReturnTile(tile);
                 cell.ClearTileData();
             }
         }
+
+        public void MixTheTiles()
+        {
+            List<LetterTile> tiles = new();
+
+            foreach (var cell in cells)
+                if (cell.IsBusy)
+                {
+                    tiles.Add(cell.CurrentTile);
+                    cell.ClearTileData();
+                }
+
+            while (tiles.Count > 0)
+            {
+                var randomIndex = Random.Range(0, tiles.Count);
+                ReturnTileToFreeCell(tiles[randomIndex]);
+                tiles.RemoveAt(randomIndex);
+            }
+        }
+
         private List<NewLetterPanelCell> GetFreeCells()
         {
             List<NewLetterPanelCell> freeCells = new();
