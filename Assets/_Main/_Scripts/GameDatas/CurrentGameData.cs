@@ -22,5 +22,12 @@ namespace _Main._Scripts.GameDatas
         }
 
         public void SetComplexity(BotComplexity botComplexity) => Complexity = botComplexity;
+
+        public void ClearData()
+        {
+            CreatedWords.Clear();
+            PlayerPoints = 0;
+            PCPoints = 0;
+        }
     }
 }

@@ -31,7 +31,6 @@ namespace _Main._Scripts._GameStateMachine
                 new PlayerStepState(this, newLettersPanel, lettersPool, dictionary, dragAndDrop, gameData, fieldFacade),
                 new BotStepState(this, fieldFacade, settingsArray, gameData),
                 new ResultState(this,gameData,newLettersPanel),
-                new MainMenuState()
             };
 
             _currentState = _states[0];

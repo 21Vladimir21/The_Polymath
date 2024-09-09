@@ -1,6 +1,9 @@
 using _Main._Scripts.BotLogic;
 using _Main._Scripts.GameDatas;
 using _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic;
+using _Main._Scripts.Services;
+using _Main._Scripts.UI;
+using _Main._Scripts.UI.Views;
 using UnityEngine;
 
 namespace _Main._Scripts._GameStateMachine.States
@@ -16,6 +19,7 @@ namespace _Main._Scripts._GameStateMachine.States
         private int _remainedTiles;
         private int _remainedPoints;
         private BotComplexitySettings _currentComplexity;
+        private readonly InGameView _inGameView;
 
         public BotStepState(IStateSwitcher stateSwitcher, FieldFacade fieldFacade,
             BotComplexitySettings[] complexitySettings, CurrentGameData gameData)
@@ -26,21 +30,24 @@ namespace _Main._Scripts._GameStateMachine.States
             _gameData = gameData;
             _fieldFacade.OnDecreaseRemainingTiles.AddListener(UpdateRemainingTiles);
             _fieldFacade.OnDecreaseRemainingPoints.AddListener(UpdateRemainingPoints);
+
+            var locator = ServiceLocator.Instance.GetServiceByType<UILocator>();
+
+            _inGameView = locator.GetViewByType<InGameView>();
         }
 
-        public async void Enter()
+        public void Enter()
         {
             SetComplexity();
             SetRemainedPoints();
             SetRemainedTiles();
-            PlaceWords();
-
+            _inGameView.ShowBotPanel(PlaceWords);
+            _inGameView.UpdatePoints(_gameData.PlayerPoints, _gameData.PCPoints);
             //TODO: Добавить проверку на то сколько осталось плиток в пуле 
         }
 
         public void Exit()
         {
-            Debug.Log($"Очки бота: {_gameData.PCPoints}");
         }
 
         public void Update()

@@ -24,8 +24,8 @@ namespace _Main._Scripts._GameStateMachine.States
         private readonly CurrentGameData _gameData;
         private readonly FieldFacade _fieldFacade;
         private readonly WordValidationHandler _wordValidationHandler;
-        private SwapTilesHandler _swapTilesHandler;
         private readonly ValidationWordsView _validationWordsView;
+        private readonly InGameView _inGameView;
 
         public PlayerStepState(IStateSwitcher stateSwitcher, NewLettersPanel newLettersPanel,
             LettersPool lettersPool, SortingDictionary dictionary, DragAndDrop dragAndDrop,
@@ -45,48 +45,53 @@ namespace _Main._Scripts._GameStateMachine.States
 
             var locator = ServiceLocator.Instance.GetServiceByType<UILocator>();
             _validationWordsView = locator.GetViewByType<ValidationWordsView>();
-            var inGameView = locator.GetViewByType<InGameView>();
+            _inGameView = locator.GetViewByType<InGameView>();
 
-            _swapTilesHandler = new(lettersPool, _newLettersPanel, inGameView.SwapTilesPanelView);
-            _swapTilesHandler.OnSwapped += EndStep;
+            SwapTilesHandler swapTilesHandler = new(lettersPool, _newLettersPanel, _inGameView.SwapTilesPanelView);
+            swapTilesHandler.OnSwapped += EndStep;
 
-            inGameView.CheckWordsButton.onClick.AddListener(ValidateNewWords);
-            inGameView.ReturnLettersToPanelButton.onClick.AddListener(ReturnLettersToPanel);
-            inGameView.EndStepButton.onClick.AddListener(EndStep);
-            inGameView.MixTilesButton.onClick.AddListener(newLettersPanel.MixTheTiles);
+            _inGameView.CheckWordsButton.onClick.AddListener(ValidateNewWords);
+            _inGameView.ReturnLettersToPanelButton.onClick.AddListener(ReturnLettersToPanel);
+            _inGameView.EndStepButton.onClick.AddListener(EndStep);
+            _inGameView.MixTilesButton.onClick.AddListener(newLettersPanel.MixTheTiles);
         }
 
         public void Enter()
         {
             _dragAndDrop.CanDrag = true;
             _newLettersPanel.SetNewLettersInPanel();
+            _inGameView.ShowPlayerPanel();
+            _inGameView.UpdatePoints(_gameData.PlayerPoints,_gameData.PCPoints);
+            
         }
 
         public void Exit()
         {
-            int points = 0;
-            _wordValidationHandler.CheckingGridForCorrectnessWords(ref points, true, out var _);
-            Debug.Log($"Очки за ход: {points}");
-
             _newLettersPanel.ReturnNotRightTilesToPanel();
             _fieldFacade.ClearNotRightTiles();
             _dragAndDrop.CanDrag = false;
             _fieldFacade.UpdateFieldWords();
             _newLettersPanel.SetNewLettersInPanel();
-
-            _gameData.PlayerPoints += points;
         }
 
         public void Update()
         {
+#if UNITY_EDITOR
+
             if (Input.GetKeyDown(KeyCode.R))
             {
                 _fieldFacade.CreateRandomStartWord();
             }
+#endif
         }
 
         private void EndStep()
         {
+            int points = 0;
+            _wordValidationHandler.CheckingGridForCorrectnessWords(ref points, true, out var _);
+            Debug.Log($"Очки за ход: {points}");
+            _gameData.PlayerPoints += points;
+
             if (_gameData.HasBeenRequiredPoints)
                 _stateSwitcher.SwitchState<ResultState>();
             else

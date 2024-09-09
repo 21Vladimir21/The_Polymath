@@ -1,9 +1,6 @@
-using System;
 using TMPro;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.Serialization;
 
 namespace _Main._Scripts.GameLogic.LettersLogic
 {
