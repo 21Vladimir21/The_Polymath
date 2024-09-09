@@ -6,6 +6,7 @@ using _Main._Scripts.DictionaryLogic;
 using _Main._Scripts.GameLogic;
 using _Main._Scripts.GameLogic.NewLettersPanelLogic;
 using _Main._Scripts.GameLogic.PlayingFieldLogic;
+using _Main._Scripts.GameLogic.SwapTilesLogic;
 using _Main._Scripts.LetterPooLogic;
 using _Main._Scripts.Services;
 using _Main._Scripts.UI;
@@ -27,21 +28,19 @@ namespace _Main._Scripts
         [SerializeField] private LettersDataHolder _lettersDataHolder;
         [SerializeField] private List<BotComplexitySettings> _botComplexitySettings;
         [SerializeField] private UIViewsHolder uiViewsHolder;
-        
+
+        [SerializeField] private LettersPoolConfig _lettersPoolConfig;
 
 
         private GameStateMachine _gameStateMachine;
         private LettersPool _lettersPool;
 
 
-        [SerializeField] private LettersPoolConfig _lettersPoolConfig;
-
-
         private void Awake()
         {
             var uiLocator = new UILocator(uiViewsHolder);
             ServiceLocator.Instance.TryAddService(uiLocator);
-            
+
             _lettersPool = new LettersPool(_lettersPoolConfig, lettersParent);
             _gameStateMachine = new GameStateMachine(playingField, newLettersPanel, _lettersPool, dictionary,
                 dragAndDrop, _lettersDataHolder, _botComplexitySettings.ToArray());

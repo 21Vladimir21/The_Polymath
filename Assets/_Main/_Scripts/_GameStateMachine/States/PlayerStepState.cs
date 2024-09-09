@@ -6,6 +6,7 @@ using _Main._Scripts.GameDatas;
 using _Main._Scripts.GameLogic;
 using _Main._Scripts.GameLogic.NewLettersPanelLogic;
 using _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic;
+using _Main._Scripts.GameLogic.SwapTilesLogic;
 using _Main._Scripts.LetterPooLogic;
 using _Main._Scripts.Services;
 using _Main._Scripts.UI;
@@ -23,7 +24,7 @@ namespace _Main._Scripts._GameStateMachine.States
         private readonly CurrentGameData _gameData;
         private readonly FieldFacade _fieldFacade;
         private readonly WordValidationHandler _wordValidationHandler;
-        private InGameView _inGameView;
+        private SwapTilesHandler _swapTilesHandler;
 
         public PlayerStepState(IStateSwitcher stateSwitcher, NewLettersPanel newLettersPanel,
             LettersPool lettersPool, SortingDictionary dictionary, DragAndDrop dragAndDrop,
@@ -42,12 +43,15 @@ namespace _Main._Scripts._GameStateMachine.States
             dragAndDrop.OnSwappedTiles += _newLettersPanel.ReturnTileToFreeCell;
 
             var locator = ServiceLocator.Instance.GetServiceByType<UILocator>();
-            _inGameView = locator.GetViewByType<InGameView>();
+            var inGameView = locator.GetViewByType<InGameView>();
 
-            _inGameView.CheckWordsButton.onClick.AddListener(ValidateNewWords);
-            _inGameView.ReturnLettersToPanelButton.onClick.AddListener(ReturnLettersToPanel);
-            _inGameView.EndStepButton.onClick.AddListener(EndStep);
-            _inGameView.MixTilesButton.onClick.AddListener(newLettersPanel.MixTheTiles);
+            _swapTilesHandler = new(lettersPool, _newLettersPanel, inGameView.SwapTilesPanelView);
+            _swapTilesHandler.OnSwapped += EndStep;
+
+            inGameView.CheckWordsButton.onClick.AddListener(ValidateNewWords);
+            inGameView.ReturnLettersToPanelButton.onClick.AddListener(ReturnLettersToPanel);
+            inGameView.EndStepButton.onClick.AddListener(EndStep);
+            inGameView.MixTilesButton.onClick.AddListener(newLettersPanel.MixTheTiles);
         }
 
         public void Enter()
@@ -59,9 +63,9 @@ namespace _Main._Scripts._GameStateMachine.States
         public void Exit()
         {
             int points = 0;
-            _wordValidationHandler.CheckingGridForCorrectnessWords(ref points,true);
+            _wordValidationHandler.CheckingGridForCorrectnessWords(ref points, true);
             Debug.Log($"Очки за ход: {points}");
-            
+
             _newLettersPanel.ReturnNotRightTilesToPanel();
             _fieldFacade.ClearNotRightTiles();
             _dragAndDrop.CanDrag = false;
@@ -96,7 +100,7 @@ namespace _Main._Scripts._GameStateMachine.States
         private void ValidateNewWords()
         {
             int points = 0;
-            _wordValidationHandler.CheckingGridForCorrectnessWords(ref points,false);
+            _wordValidationHandler.CheckingGridForCorrectnessWords(ref points, false);
             Debug.Log($"Очки: {points}");
         }
     }

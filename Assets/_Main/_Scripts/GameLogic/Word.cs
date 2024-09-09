@@ -19,7 +19,7 @@ namespace _Main._Scripts.GameLogic
             foreach (var tile in tiles)
             {
                 tile.OnSwapped.RemoveAllListeners();
-                tile.OnSwapped.AddListener(SwapTile);
+                tile.OnSwapped.AddListener(SwapTileOnGrid);
             }
         }
 
@@ -52,7 +52,7 @@ namespace _Main._Scripts.GameLogic
             foreach (var tile in Tiles) tile.SetInWord();
         }
         
-        private void SwapTile(LetterTile tile,LetterTile newTile)
+        private void SwapTileOnGrid(LetterTile tile,LetterTile newTile)
         {
             Debug.Log($"Swap tile {tile.name} to {newTile.name}");
             var indexOf = Tiles.IndexOf(tile);

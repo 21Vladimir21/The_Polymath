@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using _Main._Scripts.GameLogic.LettersLogic;
+using _Main._Scripts.GameLogic.SwapTilesLogic;
 using _Main._Scripts.LetterPooLogic;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -9,27 +10,16 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
 {
     public class NewLettersPanel : MonoBehaviour
     {
-        [SerializeField] private List<NewLetterPanelCell> cells;
+        [field: SerializeField] public List<NewLetterPanelCell> Cells { get; private set; }
 
         private LettersPool _lettersPool;
+        private SwapTilesPanelView _swapTilesPanelView;
 
         public void Initialize(LettersPool lettersPool)
         {
             _lettersPool = lettersPool;
         }
-
-        public void SwapTiles()
-        {
-            foreach (var cell in cells)
-                if (cell.IsBusy)
-                {
-                    _lettersPool.ReturnTile(cell.CurrentTile);
-                    cell.ClearTileData();
-                }
-            
-            SetNewLettersInPanel();
-        }
-
+        
         public void SetNewLettersInPanel()
         {
             var freeCells = GetFreeCells();
@@ -42,7 +32,7 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
 
         public void ReturnAllTilesIntoCells()
         {
-            foreach (var cell in cells)
+            foreach (var cell in Cells)
             {
                 if (cell.IsBusy)
                     continue;
@@ -52,7 +42,7 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
 
         public void ReturnNotRightTilesToPanel()
         {
-            foreach (var cell in cells)
+            foreach (var cell in Cells)
             {
                 if (cell.IsBusy || cell.LastTile.InRightWord)
                     continue;
@@ -62,7 +52,7 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
 
         public void ReturnAllTilesToPool()
         {
-            foreach (var cell in cells)
+            foreach (var cell in Cells)
             {
                 if (!cell.IsBusy) continue;
 
@@ -77,7 +67,7 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
         {
             List<LetterTile> tiles = new();
 
-            foreach (var cell in cells)
+            foreach (var cell in Cells)
                 if (cell.IsBusy)
                 {
                     tiles.Add(cell.CurrentTile);
@@ -92,10 +82,10 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
             }
         }
 
-        private List<NewLetterPanelCell> GetFreeCells()
+        public List<NewLetterPanelCell> GetFreeCells()
         {
             List<NewLetterPanelCell> freeCells = new();
-            foreach (var cell in cells)
+            foreach (var cell in Cells)
             {
                 if (cell.IsBusy) continue;
                 freeCells.Add(cell);
