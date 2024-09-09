@@ -44,12 +44,16 @@ namespace _Main._Scripts.GameLogic.SwapTilesLogic
 
         private void SwapSelectedTiles()
         {
-            RewardSwapSelectedTiles();
+            SwapTiles();
             OnSwapped?.Invoke();
-            Debug.Log("Default swap!");
         }
 
         private void RewardSwapSelectedTiles()
+        {
+            SwapTiles();
+        }
+
+        private void SwapTiles()
         {
             ReturnTilesInPool();
             _newLettersPanel.SetNewLettersInPanel();

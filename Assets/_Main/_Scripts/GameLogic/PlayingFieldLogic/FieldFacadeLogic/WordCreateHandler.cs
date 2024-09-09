@@ -52,12 +52,12 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
                 {
                     var wordNotFound = true;
                     foreach (var word in _gameData.CreatedWords)
-                        if (string.Equals(word.StringWord, candidateWord.Word, StringComparison.OrdinalIgnoreCase))
+                        if (string.Equals(word.StringWord, candidateWord, StringComparison.OrdinalIgnoreCase))
                             wordNotFound = false;
 
                     if (wordNotFound == false) continue;
 
-                    var modifiedWord = MaskLetterAtPosition(candidateWord.Word, randomLetterPositionInWord);
+                    var modifiedWord = MaskLetterAtPosition(candidateWord, randomLetterPositionInWord);
 
                     var remainingTilesNow = IsEnoughTiles(remainedTiles, modifiedWord);
                     if (remainingTilesNow < 0) continue;
@@ -65,7 +65,7 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
                     if (!CanFitWordInAvailableCells(modifiedWord, space.FreeCellsFromBeginningLetter,
                             space.FreeCellsFromEndLetter)) continue;
 
-                    if (!IsWordPointsWithLimits(candidateWord.Word, ref remainedPoints))
+                    if (!IsWordPointsWithLimits(candidateWord, ref remainedPoints))
                         continue;
 
                     var letterTiles = TilesFounded(modifiedWord);
@@ -75,10 +75,10 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
                     _onDecreaseRemainingTiles?.Invoke(remainingTilesNow);
                     _onDecreaseRemainingPoints?.Invoke(remainedPoints);
 
-                    UpdatePointsWithNewWord(modifiedWord, candidateWord.Word, space.IsHorizontal,
+                    UpdatePointsWithNewWord(modifiedWord, candidateWord, space.IsHorizontal,
                         space.LetterTile.TileCoordinates);
                     Debug.Log(
-                        $"Начальная буква {space.LetterTile.LetterString} , Модифицированное слово {modifiedWord}, поставленное слово {candidateWord.Word}");
+                        $"Начальная буква {space.LetterTile.LetterString} , Модифицированное слово {modifiedWord}, поставленное слово {candidateWord}");
                     return true;
                 }
             }
@@ -93,14 +93,14 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
 
             foreach (var candidateWord in words)
             {
-                var modifiedWord = MaskMatchingLetters(wordFreeCellsInfo.Word.StringWord, candidateWord.Word);
+                var modifiedWord = MaskMatchingLetters(wordFreeCellsInfo.Word.StringWord, candidateWord);
 
                 var remainingTilesNow = IsEnoughTiles(remainedTiles, modifiedWord);
                 if (remainingTilesNow < 0) continue;
 
                 if (!CanFitWordInAvailableCells(modifiedWord, wordFreeCellsInfo.FreeCellsFromBeginningWord,
                         wordFreeCellsInfo.FreeCellsFromEndWord)) continue;
-                if (!IsWordPointsWithLimits(candidateWord.Word, ref remainedPoints))
+                if (!IsWordPointsWithLimits(candidateWord, ref remainedPoints))
                     continue;
 
                 var letterTiles = TilesFounded(modifiedWord);
@@ -110,11 +110,11 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
                 _onDecreaseRemainingTiles?.Invoke(remainingTilesNow);
                 _onDecreaseRemainingPoints?.Invoke(remainedPoints);
 
-                UpdatePointsWithNewWord(modifiedWord, candidateWord.Word, wordFreeCellsInfo.Word.IsHorizontal,
+                UpdatePointsWithNewWord(modifiedWord, candidateWord, wordFreeCellsInfo.Word.IsHorizontal,
                     wordFreeCellsInfo.StartWordCoords);
 
                 Debug.Log(
-                    $"Начальное слово {wordFreeCellsInfo.Word.StringWord} , Модифицированное слово {modifiedWord}, поставленное слово {candidateWord.Word}");
+                    $"Начальное слово {wordFreeCellsInfo.Word.StringWord} , Модифицированное слово {modifiedWord}, поставленное слово {candidateWord}");
 
                 return true;
             }

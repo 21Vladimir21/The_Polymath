@@ -25,6 +25,7 @@ namespace _Main._Scripts._GameStateMachine.States
         private readonly FieldFacade _fieldFacade;
         private readonly WordValidationHandler _wordValidationHandler;
         private SwapTilesHandler _swapTilesHandler;
+        private readonly ValidationWordsView _validationWordsView;
 
         public PlayerStepState(IStateSwitcher stateSwitcher, NewLettersPanel newLettersPanel,
             LettersPool lettersPool, SortingDictionary dictionary, DragAndDrop dragAndDrop,
@@ -43,6 +44,7 @@ namespace _Main._Scripts._GameStateMachine.States
             dragAndDrop.OnSwappedTiles += _newLettersPanel.ReturnTileToFreeCell;
 
             var locator = ServiceLocator.Instance.GetServiceByType<UILocator>();
+            _validationWordsView = locator.GetViewByType<ValidationWordsView>();
             var inGameView = locator.GetViewByType<InGameView>();
 
             _swapTilesHandler = new(lettersPool, _newLettersPanel, inGameView.SwapTilesPanelView);
@@ -63,7 +65,7 @@ namespace _Main._Scripts._GameStateMachine.States
         public void Exit()
         {
             int points = 0;
-            _wordValidationHandler.CheckingGridForCorrectnessWords(ref points, true);
+            _wordValidationHandler.CheckingGridForCorrectnessWords(ref points, true, out var _);
             Debug.Log($"Очки за ход: {points}");
 
             _newLettersPanel.ReturnNotRightTilesToPanel();
@@ -100,8 +102,8 @@ namespace _Main._Scripts._GameStateMachine.States
         private void ValidateNewWords()
         {
             int points = 0;
-            _wordValidationHandler.CheckingGridForCorrectnessWords(ref points, false);
-            Debug.Log($"Очки: {points}");
+            _wordValidationHandler.CheckingGridForCorrectnessWords(ref points, false, out var words);
+            _validationWordsView.SetResultText(words, points, () => _validationWordsView.Open());
         }
     }
 }

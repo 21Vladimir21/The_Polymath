@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using _Main._Scripts.GameLogic;
 using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
-using Unity.VisualScripting;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -17,66 +14,35 @@ namespace _Main._Scripts.DictionaryLogic
         [SerializeField] private TextAsset words;
 
         [SerializeField] private List<WordLengthDictionaryHolder> dictionaryHolders = new();
-        public HashSet<HashSet<string>> dsdsd;
 
-
-        public List<string> GetWordsFromFirstLetterAndLength(Letters firstLetter, int length)
+        public async UniTask<List<string>> GetWordsFromWordPart(string word)
         {
-            List<string> foundWords = new();
-            foreach (var dictionaryHolder in dictionaryHolders)
-            {
-                if (dictionaryHolder.WordLength != length) continue;
-                if (length > dictionaryHolder.WordLength) break;
-
-                foreach (var wordHolder in dictionaryHolder.FirstLetterWordHolders)
-                {
-                    if (wordHolder.FirstLetter == firstLetter)
-                    {
-                        foundWords.AddRange(wordHolder.Words.Select(x => x.Word));
-                        break;
-                    }
-                }
-            }
-
-            return foundWords.Count > 0 ? foundWords : null;
-        }
-
-
-        public string GetWordDescription(string word)
-        {
-            var dictionaryWord = TryFoundWord(word);
-            return dictionaryWord.Description;
-        }
-
-        public async UniTask<List<DictionaryWord>> GetWordsFromWordPart(string word)
-        {
-            List<DictionaryWord> foundedWords = new();
+            List<string> foundedWords = new();
             var wordLength = word.Length;
             foreach (var holder in dictionaryHolders)
             {
-                
                 if (holder.WordLength > wordLength)
                     foreach (var letterWordHolder in holder.FirstLetterWordHolders)
                     foreach (var dictionaryWord in letterWordHolder.Words)
-                        if (dictionaryWord.Word.Contains(word, StringComparison.OrdinalIgnoreCase))
+                        if (dictionaryWord.Contains(word, StringComparison.OrdinalIgnoreCase))
                             foundedWords.Add(dictionaryWord);
-                
+
                 await UniTask.Yield();
             }
 
             return foundedWords;
         }
 
-        public async UniTask<List<DictionaryWord>> GetWordsWithLetterAtPosition(string letter, int indexInWord = 0)
+        public async UniTask<List<string>> GetWordsWithLetterAtPosition(string letter, int indexInWord = 0)
         {
-            List<DictionaryWord> foundedWords = new();
+            List<string> foundedWords = new();
             foreach (var holder in dictionaryHolders)
             {
                 if (holder.WordLength <= indexInWord) continue;
                 foreach (var letterWordHolder in holder.FirstLetterWordHolders)
                 {
                     foreach (var dictionaryWord in letterWordHolder.Words)
-                        if (string.Equals(dictionaryWord.Word[indexInWord].ToString(),
+                        if (string.Equals(dictionaryWord[indexInWord].ToString(),
                                 letter, StringComparison.OrdinalIgnoreCase))
                         {
                             foundedWords.Add(dictionaryWord);
@@ -87,6 +53,31 @@ namespace _Main._Scripts.DictionaryLogic
             }
 
             return foundedWords;
+        }
+
+        public string TryFoundWord(string word)
+        {
+            var charArray = word.ToCharArray();
+
+
+            foreach (var holder in dictionaryHolders)
+            {
+                if (holder.WordLength != charArray.Length) continue;
+                foreach (var wordHolder in holder.FirstLetterWordHolders)
+                {
+                    if (wordHolder.FirstLetter.ToString() != charArray[0].ToString().ToUpper()) continue;
+                    foreach (var holderWord in wordHolder.Words)
+                    {
+                        if (!string.Equals(word, holderWord,
+                                StringComparison.OrdinalIgnoreCase)) continue;
+                        return holderWord;
+                    }
+
+                    return default;
+                }
+            }
+
+            return default;
         }
 
         public string GetRandomWordWithLength(int length)
@@ -103,31 +94,27 @@ namespace _Main._Scripts.DictionaryLogic
                     var randomWordIndex =
                         Random.Range(0, holder.FirstLetterWordHolders[randomFirstLetter].Words.Count);
                     var randomWord = holder.FirstLetterWordHolders[randomFirstLetter].Words[randomWordIndex];
-                    return randomWord.Word;
+                    return randomWord;
                 }
             }
 
             return default;
         }
 
+#if UNITY_EDITOR
 
         [ContextMenu("Fill dictionaries with new words")]
         private void FillDictionaries()
         {
             DeserializeData data = JsonConvert.DeserializeObject<DeserializeData>(words.text);
 
-            var wordDictionary = data.Words;
+            var hashSet = data.Words;
 
-            foreach (var valuePair in wordDictionary)
+            foreach (var word in hashSet)
             {
-                var trimWord = valuePair.Key.Trim();
-                string newWord = trimWord;
-                if (trimWord.Contains('-', StringComparison.OrdinalIgnoreCase))
-                    continue;
-                if (trimWord.Contains('ё', StringComparison.OrdinalIgnoreCase))
-                    newWord = trimWord.Replace("ё", "е", StringComparison.OrdinalIgnoreCase);
-
-                var toUpperFirstLetterWord = CapitalizeFirstLetter(newWord);
+                var trimWord = word.Trim();
+                
+                var toUpperFirstLetterWord = CapitalizeFirstLetter(trimWord);
                 var wordLength = toUpperFirstLetterWord.ToCharArray().Length;
                 var firstLetter = toUpperFirstLetterWord.ToCharArray()[0].ToString();
 
@@ -138,44 +125,10 @@ namespace _Main._Scripts.DictionaryLogic
                     foreach (var wordHolder in holder.FirstLetterWordHolders)
                     {
                         if (wordHolder.FirstLetter.ToString() != firstLetter) continue;
-                        bool wordFound = false;
-                        foreach (var holderWord in wordHolder.Words)
-                        {
-                            if (toUpperFirstLetterWord != holderWord.Word) continue;
-                            wordFound = true;
-                            break;
-                        }
-
-                        if (wordFound == false)
-                            wordHolder.TryAddWord(new DictionaryWord(toUpperFirstLetterWord, valuePair.Value));
+                            wordHolder.TryAddWord(toUpperFirstLetterWord);
                     }
                 }
             }
-        }
-
-        public DictionaryWord TryFoundWord(string word)
-        {
-            var charArray = word.ToCharArray();
-
-
-            foreach (var holder in dictionaryHolders)
-            {
-                if (holder.WordLength != charArray.Length) continue;
-                foreach (var wordHolder in holder.FirstLetterWordHolders)
-                {
-                    if (wordHolder.FirstLetter.ToString() != charArray[0].ToString().ToUpper()) continue;
-                    foreach (var holderWord in wordHolder.Words)
-                    {
-                        if (!string.Equals(word, holderWord.Word,
-                                StringComparison.OrdinalIgnoreCase)) continue;
-                        return holderWord;
-                    }
-
-                    return default;
-                }
-            }
-
-            return default;
         }
 
         [ContextMenu("Create new dictionary holders")]
@@ -210,6 +163,7 @@ namespace _Main._Scripts.DictionaryLogic
 
     public class DeserializeData
     {
-        public Dictionary<string, string> Words { get; set; }
+        public List<string> Words { get; set; }
     }
+#endif
 }

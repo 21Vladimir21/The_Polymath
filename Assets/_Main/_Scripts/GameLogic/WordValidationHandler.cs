@@ -24,8 +24,9 @@ namespace _Main._Scripts.GameLogic
         }
 
 
-        public void CheckingGridForCorrectnessWords(ref int points, bool endStep)
+        public void CheckingGridForCorrectnessWords(ref int points, bool endStep, out List<string> notFoundWords)
         {
+            notFoundWords = new();
             _createdWords.Clear();
             List<Word> words = _fieldFacade.GetWordsOnField();
 
@@ -44,7 +45,10 @@ namespace _Main._Scripts.GameLogic
                 else if (IsWordValid(word) == ValidationResults.SetNotRight && word.StringWord.Length > 1)
                     Debug.Log($"Word |{word.StringWord}| set not right");
                 else if (IsWordValid(word) == ValidationResults.NotFound && word.StringWord.Length > 1)
+                {
+                    notFoundWords.Add(word.StringWord);
                     Debug.Log($"Word |{word.StringWord}| not found");
+                }
                 else if (IsWordValid(word) == ValidationResults.WordWasPosted && word.StringWord.Length > 1)
                     Debug.Log($"Word |{word.StringWord}| was posed");
             }
@@ -67,7 +71,7 @@ namespace _Main._Scripts.GameLogic
 
 
             var foundWord = _dictionary.TryFoundWord(word.StringWord);
-            bool wordExists = foundWord != null && !string.IsNullOrEmpty(foundWord.Word);
+            bool wordExists = foundWord != null && !string.IsNullOrEmpty(foundWord);
             if (wordExists == false) return ValidationResults.NotFound;
 
             return ValidationResults.Success;

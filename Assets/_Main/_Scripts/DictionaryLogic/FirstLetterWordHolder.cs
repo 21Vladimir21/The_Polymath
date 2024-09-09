@@ -17,11 +17,11 @@ namespace _Main._Scripts.DictionaryLogic
         }
 
         [field: SerializeField] public Letters FirstLetter { get; private set; }
-        [field: SerializeField] public List<DictionaryWord> Words { get; private set; } = new();
+        [field: SerializeField] public List<string> Words { get; private set; } = new();
 
-        public bool TryAddWord(DictionaryWord word)
+        public bool TryAddWord(string word)
         {
-            var charArray = word.Word.ToCharArray();
+            var charArray = word.ToCharArray();
             if (charArray[0].ToString() == FirstLetter.ToString())
             {
                 Words.Add(word);

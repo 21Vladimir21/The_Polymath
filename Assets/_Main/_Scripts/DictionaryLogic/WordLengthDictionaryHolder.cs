@@ -31,9 +31,9 @@ namespace _Main._Scripts.DictionaryLogic
 
         [field: SerializeField] public List<FirstLetterWordHolder> FirstLetterWordHolders { get; private set; } = new();
 
-        public bool TryAddNewWord(DictionaryWord word)
+        public bool TryAddNewWord(string word)
         {
-            var charArray = word.Word.ToCharArray();
+            var charArray = word.ToCharArray();
             if (charArray.Length < WordLength)
             {
                 foreach (var wordHolder in FirstLetterWordHolders)
