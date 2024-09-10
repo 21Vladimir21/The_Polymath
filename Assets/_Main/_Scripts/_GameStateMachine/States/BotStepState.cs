@@ -1,3 +1,4 @@
+using System;
 using _Main._Scripts.BotLogic;
 using _Main._Scripts.GameDatas;
 using _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic;
@@ -5,6 +6,7 @@ using _Main._Scripts.Services;
 using _Main._Scripts.UI;
 using _Main._Scripts.UI.Views;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace _Main._Scripts._GameStateMachine.States
 {
@@ -48,17 +50,26 @@ namespace _Main._Scripts._GameStateMachine.States
 
         public void Exit()
         {
-            _fieldFacade.LastPlacedTileCells.Clear();
         }
 
         public void Update()
         {
         }
 
-        private void MoveTilesToCellsAndActivateCellShine()
+        private void MoveTilesToCellsAndActivateCellShine(Action callback)
         {
-            
+            if (_fieldFacade.LastPlacedTileCells.Count <= 0)
+            {
+                callback?.Invoke();
+                return;
+            }
+
+            foreach (var cell in _fieldFacade.LastPlacedTileCells) 
+                cell.AnimatedMoveTileToCell(() => cell.ActivateShine(callback));
+
+            _fieldFacade.LastPlacedTileCells.Clear();
         }
+
         private async void PlaceWords()
         {
             var value = Random.Range(0, 2);
@@ -77,10 +88,14 @@ namespace _Main._Scripts._GameStateMachine.States
                         break;
             }
 
-            if (_gameData.HasBeenRequiredPoints)
-                _stateSwitcher.SwitchState<ResultState>();
-            else
-                _stateSwitcher.SwitchState<PlayerStepState>();
+
+            MoveTilesToCellsAndActivateCellShine(() =>
+            {
+                if (_gameData.HasBeenRequiredPoints)
+                    _stateSwitcher.SwitchState<ResultState>();
+                else
+                    _stateSwitcher.SwitchState<PlayerStepState>();
+            });
         }
 
         private void SetComplexity(bool setForce = false)

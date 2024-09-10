@@ -3666,8 +3666,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 698}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: 0, y: 752}
+  m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &287545860 stripped
 RectTransform:
@@ -6213,6 +6213,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcf8c05b6a964864a367aaa3c2684eb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rectTransform: {fileID: 439069876}
+  shine: {fileID: 0}
 --- !u!224 &441125918 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3421788423944419536, guid: d07c64a95f421874b980aad0ab3c2fc5, type: 3}
@@ -16319,6 +16321,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcf8c05b6a964864a367aaa3c2684eb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rectTransform: {fileID: 670762362}
+  shine: {fileID: 0}
 --- !u!1001 &988251515
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -22953,6 +22957,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcf8c05b6a964864a367aaa3c2684eb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rectTransform: {fileID: 218661652}
+  shine: {fileID: 0}
 --- !u!1001 &1358692933
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -28168,6 +28174,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcf8c05b6a964864a367aaa3c2684eb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rectTransform: {fileID: 1626560688}
+  shine: {fileID: 0}
 --- !u!1001 &1630378296
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -36566,6 +36574,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcf8c05b6a964864a367aaa3c2684eb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rectTransform: {fileID: 2009371710}
+  shine: {fileID: 0}
 --- !u!224 &2009475329 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3421788423944419536, guid: d07c64a95f421874b980aad0ab3c2fc5, type: 3}
@@ -38060,6 +38070,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcf8c05b6a964864a367aaa3c2684eb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rectTransform: {fileID: 141268850}
+  shine: {fileID: 0}
 --- !u!224 &2115041346 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 3421788423944419536, guid: f965c93497b5ea3428302ff187b2251b, type: 3}
@@ -38335,6 +38347,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bcf8c05b6a964864a367aaa3c2684eb7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rectTransform: {fileID: 3421788424610038525}
+  shine: {fileID: 0}
 --- !u!1001 &7378770624948507793
 PrefabInstance:
   m_ObjectHideFlags: 0

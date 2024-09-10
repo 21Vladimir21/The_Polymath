@@ -70,11 +70,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 895069604642342780, guid: 10932868d6c71264a955021b9837dec0, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -341
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 895069604642342780, guid: 10932868d6c71264a955021b9837dec0, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -459
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 895069604642342780, guid: 10932868d6c71264a955021b9837dec0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -90,7 +90,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1613238096565600305, guid: 10932868d6c71264a955021b9837dec0, type: 3}
       propertyPath: m_Name
-      value: "LetterTile \u041E"
+      value: "LetterTile \u041E Variant"
       objectReference: {fileID: 0}
     - target: {fileID: 2342976653617159970, guid: 10932868d6c71264a955021b9837dec0, type: 3}
       propertyPath: m_text

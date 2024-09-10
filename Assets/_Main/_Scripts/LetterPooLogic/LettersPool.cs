@@ -65,6 +65,10 @@ namespace _Main._Scripts.LetterPooLogic
             }
         }
 
-        public void ReturnTile(LetterTile tile) => tile.gameObject.SetActive(false);
+        public void ReturnTile(LetterTile tile)
+        {
+            tile.RectTransform.position = Vector3.zero;
+            tile.gameObject.SetActive(false);
+        }
     }
 }

@@ -14,7 +14,7 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
 {
     public class FieldFacade
     {
-        public readonly List<TileCell> LastPlacedTileCells = new();
+        public readonly List<PlayingFieldCell> LastPlacedTileCells = new();
         
         public readonly UnityEvent<int> OnDecreaseRemainingTiles = new();
         public readonly UnityEvent<int> OnDecreaseRemainingPoints = new();
@@ -174,7 +174,7 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
                 tile.MarkInRightWord();
         }
 
-        private void AddLastPlacedTileToList(TileCell cell) => LastPlacedTileCells.Add(cell);
+        private void AddLastPlacedTileToList(PlayingFieldCell cell) => LastPlacedTileCells.Add(cell);
 
         public void CreateRandomStartWord()
         {
