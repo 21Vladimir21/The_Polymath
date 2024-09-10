@@ -63,7 +63,8 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                  _selectedCell.CurrentTile.CanMove)
             SwapTiles();
         else if (_selectedCell != null && _startDragCell != _selectedCell && _selectedCell.IsBusy &&
-                 _selectedCell.CurrentTile is JackPotTile)
+                 _selectedCell.CurrentTile is JackPotTile &&
+                 _selectedCell.CurrentTile.Letter.Equals(_startDragCell.CurrentTile.Letter))
             SwapJackPotTile();
         else if (_draggedObject != null) _startDragCell.ResetTilePosition();
 
@@ -73,6 +74,7 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private void SwapJackPotTile()
     {
         var jackPotTile = _selectedCell.CurrentTile;
+        if (!jackPotTile.Letter.Equals(_startDragCell.CurrentTile.Letter)) return;
         _selectedCell.CurrentTile.OnSwapped?.Invoke(jackPotTile, _startDragCell.CurrentTile);
         _selectedCell.ClearTileData();
         _selectedCell.AddTile(_startDragCell.CurrentTile);
