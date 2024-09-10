@@ -38,7 +38,7 @@ namespace _Main._Scripts._GameStateMachine.States
             _gameData = gameData;
             _fieldFacade = fieldFacade;
 
-            _newLettersPanel.Initialize(lettersPool,fieldFacade);
+            _newLettersPanel.Initialize(lettersPool);
             _wordValidationHandler = new WordValidationHandler(dictionary, fieldFacade, gameData);
 
             dragAndDrop.OnSwappedTiles += _newLettersPanel.ReturnTileToFreeCell;
@@ -62,11 +62,13 @@ namespace _Main._Scripts._GameStateMachine.States
             _newLettersPanel.SetNewLettersInPanel();
             _inGameView.ShowPlayerPanel();
             _inGameView.UpdatePoints(_gameData.PlayerPoints,_gameData.PCPoints);
+            _inGameView.SetInteractableButtons(true);
             
         }
 
         public void Exit()
         {
+            _inGameView.SetInteractableButtons(false);
             _newLettersPanel.ReturnAllTilesIntoCells(_fieldFacade.GetCellsFromNotRightTiles());
             _fieldFacade.ClearNotRightTiles();
             _dragAndDrop.CanDrag = false;

@@ -31,8 +31,14 @@ namespace _Main._Scripts.UI.Views
 
         public void ShowPlayerPanel(Action callback = null) => StartCoroutine(ShowPanelRoutine(playerStepPanel,callback));
         public void ShowBotPanel(Action callback = null) => StartCoroutine(ShowPanelRoutine(botStepPanel,callback));
-
-
+        
+        public void SetInteractableButtons(bool interactable)
+        {
+            CheckWordsButton.interactable = interactable;
+            EndStepButton.interactable = interactable;
+            ReturnLettersToPanelButton.interactable = interactable;
+            SwapTilesPanelView.OpenPanelButton.interactable = interactable;
+        }
         private IEnumerator ShowPanelRoutine(GameObject panel,Action callBack)
         {
             panel.gameObject.SetActive(true);

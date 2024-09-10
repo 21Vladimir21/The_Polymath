@@ -7,6 +7,8 @@ namespace _Main._Scripts.GameLogic.JackPotLogic
     {
         [SerializeField] private JackPotLetterHolder[] holders;
         [SerializeField] private GameObject letterPanel;
+        [SerializeField] private GameObject star;
+        
         private const int YPanelPosition = 130;
 
 
@@ -26,6 +28,7 @@ namespace _Main._Scripts.GameLogic.JackPotLogic
         {
             base.ResetTile();
             letterText.text = "*";
+            star.SetActive(false);
             pointsText.gameObject.SetActive(false);
             letterData = null;
         }
@@ -60,6 +63,7 @@ namespace _Main._Scripts.GameLogic.JackPotLogic
             letterText.text = LetterString;
             pointsText.gameObject.SetActive(true);
             pointsText.text = letterData.Points.ToString();
+            star.SetActive(true);
         }
     }
 }

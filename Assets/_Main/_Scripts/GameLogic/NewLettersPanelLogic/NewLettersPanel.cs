@@ -14,15 +14,13 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
         [field: SerializeField] public List<NewLetterPanelCell> Cells { get; private set; }
 
         private LettersPool _lettersPool;
-        private FieldFacade _fieldFacade;
         private SwapTilesPanelView _swapTilesPanelView;
 
-        public void Initialize(LettersPool lettersPool,FieldFacade fieldFacade)
+        public void Initialize(LettersPool lettersPool)
         {
             _lettersPool = lettersPool;
-            _fieldFacade = fieldFacade;
         }
-        
+
         public void SetNewLettersInPanel()
         {
             var freeCells = GetFreeCells();
@@ -42,7 +40,6 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
             }
         }
 
-  
 
         public void ReturnAllTilesToPool()
         {
@@ -92,6 +89,20 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
         {
             var freeCells = GetFreeCells();
             freeCells[0].AddTileAndAllowMove(tile);
+        }
+
+        public void UpAndShakeAllTiles()
+        {
+            foreach (var cell in Cells)
+                if (cell.IsBusy)
+                    cell.UpAndShakeTile();
+        }
+
+        public void DownAndStopShakeAllTiles()
+        {
+            foreach (var cell in Cells)
+                if (cell.IsBusy)
+                    cell.DownAndStopShake();
         }
 
         private List<Letters> CreateRandomLettersList(int count)

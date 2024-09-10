@@ -166,11 +166,14 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
                         coords = new Vector2Int(newIndex, startCoords.y);
 
                     var playingFieldCell = _grid[coords.x, coords.y];
-                    OnPlaceTile?.Invoke( playingFieldCell);
+                    
                     playingFieldCell.AddTile(tile,false);
+                    tile.SetOnField(coords);
                     tile.SetInWord();
-
+                    
                     tiles.Remove(tile);
+                    
+                    OnPlaceTile?.Invoke( playingFieldCell);
                     break;
                 }
             }

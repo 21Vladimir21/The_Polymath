@@ -40,6 +40,7 @@ namespace _Main._Scripts.GameLogic.SwapTilesLogic
         private void OpenPanel()
         {
             _newLettersPanel.ReturnAllTilesIntoCells(_fieldFacade.GetCellsFromMovableTiles());
+            _newLettersPanel.UpAndShakeAllTiles();
             _fieldFacade.ClearMovableTiles();
             _panel.SetActive(true);
         }
@@ -48,6 +49,7 @@ namespace _Main._Scripts.GameLogic.SwapTilesLogic
         {
             CancelSwap();
             _panel.SetActive(false);
+            _newLettersPanel.DownAndStopShakeAllTiles();
         }
 
         private void SwapSelectedTiles()
