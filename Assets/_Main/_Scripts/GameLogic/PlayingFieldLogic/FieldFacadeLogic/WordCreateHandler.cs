@@ -5,6 +5,7 @@ using _Main._Scripts._GameStateMachine.States;
 using _Main._Scripts.DictionaryLogic;
 using _Main._Scripts.GameDatas;
 using _Main._Scripts.GameLogic.LettersLogic;
+using _Main._Scripts.GameLogic.NewLettersPanelLogic;
 using _Main._Scripts.LetterPooLogic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -15,6 +16,8 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
 {
     public class WordCreateHandler
     {
+        public Action<TileCell> OnPlaceTile;
+        
         private readonly PlayingFieldCell[,] _grid;
         private readonly SortingDictionary _dictionary;
         private readonly LettersPool _lettersPool;
@@ -163,7 +166,9 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
                     else
                         coords = new Vector2Int(newIndex, startCoords.y);
 
-                    _grid[coords.x, coords.y].AddTile(tile);
+                    var playingFieldCell = _grid[coords.x, coords.y];
+                    OnPlaceTile?.Invoke( playingFieldCell);
+                    playingFieldCell.AddTile(tile);
                     tile.SetInWord();
 
                     tiles.Remove(tile);

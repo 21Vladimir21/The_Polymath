@@ -17,19 +17,25 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
             AddTile(tile);
             tile.ResetTile();
         }
-        public void AddTile(LetterTile tile)
+        public void AddTile(LetterTile tile,bool setPosition = true)
         {
             CurrentTile = tile;
             IsBusy = true;
-            ResetTilePosition();
+            if (setPosition) ResetTilePosition();
         }
 
-        public void ClearTileData()
+        public virtual void ClearTileData()
         {
             CurrentTile = null;
             IsBusy = false;
         }
 
         public virtual void ResetTilePosition() => CurrentTile.transform.position = transform.position;
+
+
+        public void AnimatedMoveTileToCell()
+        {
+            
+        }
     }
 }

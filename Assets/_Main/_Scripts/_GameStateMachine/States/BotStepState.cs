@@ -48,12 +48,17 @@ namespace _Main._Scripts._GameStateMachine.States
 
         public void Exit()
         {
+            _fieldFacade.LastPlacedTileCells.Clear();
         }
 
         public void Update()
         {
         }
 
+        private void MoveTilesToCellsAndActivateCellShine()
+        {
+            
+        }
         private async void PlaceWords()
         {
             var value = Random.Range(0, 2);

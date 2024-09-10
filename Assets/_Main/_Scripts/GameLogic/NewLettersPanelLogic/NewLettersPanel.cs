@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using _Main._Scripts.GameLogic.LettersLogic;
+using _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic;
 using _Main._Scripts.GameLogic.SwapTilesLogic;
 using _Main._Scripts.LetterPooLogic;
 using UnityEngine;
@@ -13,11 +14,13 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
         [field: SerializeField] public List<NewLetterPanelCell> Cells { get; private set; }
 
         private LettersPool _lettersPool;
+        private FieldFacade _fieldFacade;
         private SwapTilesPanelView _swapTilesPanelView;
 
-        public void Initialize(LettersPool lettersPool)
+        public void Initialize(LettersPool lettersPool,FieldFacade fieldFacade)
         {
             _lettersPool = lettersPool;
+            _fieldFacade = fieldFacade;
         }
         
         public void SetNewLettersInPanel()
@@ -30,25 +33,16 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
             }
         }
 
-        public void ReturnAllTilesIntoCells()
+        public void ReturnAllTilesIntoCells(List<PlayingFieldCell> cells)
         {
-            foreach (var cell in Cells)
+            foreach (var cell in cells)
             {
-                if (cell.IsBusy)
-                    continue;
-                ReturnTileToFreeCell(cell.LastTile);
+                ReturnTileToFreeCell(cell.CurrentTile);
+                cell.ClearTileData();
             }
         }
 
-        public void ReturnNotRightTilesToPanel()
-        {
-            foreach (var cell in Cells)
-            {
-                if (cell.IsBusy || cell.LastTile.InRightWord)
-                    continue;
-                ReturnTileToFreeCell(cell.LastTile);
-            }
-        }
+  
 
         public void ReturnAllTilesToPool()
         {

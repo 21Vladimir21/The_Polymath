@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using _Main._Scripts.DictionaryLogic;
 using _Main._Scripts.GameDatas;
 using _Main._Scripts.GameLogic.LettersLogic;
+using _Main._Scripts.GameLogic.NewLettersPanelLogic;
 using _Main._Scripts.LetterPooLogic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
@@ -13,6 +14,8 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
 {
     public class FieldFacade
     {
+        public readonly List<TileCell> LastPlacedTileCells = new();
+        
         public readonly UnityEvent<int> OnDecreaseRemainingTiles = new();
         public readonly UnityEvent<int> OnDecreaseRemainingPoints = new();
 
@@ -41,6 +44,8 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
             _wordCreateHandler = new WordCreateHandler(_grid, dictionary, lettersPool, OnDecreaseRemainingTiles,
                 OnDecreaseRemainingPoints, lettersDataHolder, _currentGameData);
             _wordSearchHandler = new WordSearchHandler(_grid);
+
+            _wordCreateHandler.OnPlaceTile += AddLastPlacedTileToList;
         }
 
         private void InitializeGrid()
@@ -143,11 +148,33 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
             return words;
         }
 
+        public List<PlayingFieldCell> GetCellsFromMovableTiles()
+        {
+            List<PlayingFieldCell> foundedCells = new();
+            foreach (var cell in _playingField.Cells)
+                if (cell.CurrentTile != null && cell.CurrentTile.CanMove)
+                    foundedCells.Add(cell);
+
+            return foundedCells;
+        }
+
+        public List<PlayingFieldCell> GetCellsFromNotRightTiles()
+        {
+            List<PlayingFieldCell> foundedCells = new();
+            foreach (var cell in _playingField.Cells)
+                if (cell.CurrentTile != null && !cell.CurrentTile.InRightWord)
+                    foundedCells.Add(cell);
+
+            return foundedCells;
+        }
+
         public void MarkTilesAsPartOfRightWord(List<LetterTile> currentWordTiles)
         {
             foreach (var tile in currentWordTiles)
                 tile.MarkInRightWord();
         }
+
+        private void AddLastPlacedTileToList(TileCell cell) => LastPlacedTileCells.Add(cell);
 
         public void CreateRandomStartWord()
         {
@@ -163,8 +190,8 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
             };
             for (int i = 0; i < testStartIndexes.Length; i++)
             {
-                if (_grid[testStartIndexes[i].x,testStartIndexes[i].y].IsBusy) 
-                    _lettersPool.ReturnTile(_grid[testStartIndexes[i].x,testStartIndexes[i].y].CurrentTile);
+                if (_grid[testStartIndexes[i].x, testStartIndexes[i].y].IsBusy)
+                    _lettersPool.ReturnTile(_grid[testStartIndexes[i].x, testStartIndexes[i].y].CurrentTile);
                 var letter = parsedWord[i].ToString().ToUpper();
                 var enumLetter = Enum.Parse<Letters>(letter);
                 var tile = _lettersPool.GetTile(enumLetter);

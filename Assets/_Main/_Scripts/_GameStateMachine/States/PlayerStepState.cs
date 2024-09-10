@@ -38,7 +38,7 @@ namespace _Main._Scripts._GameStateMachine.States
             _gameData = gameData;
             _fieldFacade = fieldFacade;
 
-            _newLettersPanel.Initialize(lettersPool);
+            _newLettersPanel.Initialize(lettersPool,fieldFacade);
             _wordValidationHandler = new WordValidationHandler(dictionary, fieldFacade, gameData);
 
             dragAndDrop.OnSwappedTiles += _newLettersPanel.ReturnTileToFreeCell;
@@ -47,7 +47,7 @@ namespace _Main._Scripts._GameStateMachine.States
             _validationWordsView = locator.GetViewByType<ValidationWordsView>();
             _inGameView = locator.GetViewByType<InGameView>();
 
-            SwapTilesHandler swapTilesHandler = new(lettersPool, _newLettersPanel, _inGameView.SwapTilesPanelView);
+            SwapTilesHandler swapTilesHandler = new(lettersPool, _newLettersPanel,_fieldFacade, _inGameView.SwapTilesPanelView);
             swapTilesHandler.OnSwapped += EndStep;
 
             _inGameView.CheckWordsButton.onClick.AddListener(ValidateNewWords);
@@ -67,7 +67,7 @@ namespace _Main._Scripts._GameStateMachine.States
 
         public void Exit()
         {
-            _newLettersPanel.ReturnNotRightTilesToPanel();
+            _newLettersPanel.ReturnAllTilesIntoCells(_fieldFacade.GetCellsFromNotRightTiles());
             _fieldFacade.ClearNotRightTiles();
             _dragAndDrop.CanDrag = false;
             _fieldFacade.UpdateFieldWords();
@@ -100,7 +100,7 @@ namespace _Main._Scripts._GameStateMachine.States
 
         private void ReturnLettersToPanel()
         {
-            _newLettersPanel.ReturnAllTilesIntoCells();
+            _newLettersPanel.ReturnAllTilesIntoCells(_fieldFacade.GetCellsFromMovableTiles());
             _fieldFacade.ClearMovableTiles();
         }
 

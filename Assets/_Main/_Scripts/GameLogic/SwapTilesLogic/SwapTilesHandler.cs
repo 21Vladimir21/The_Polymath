@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using _Main._Scripts.GameLogic.NewLettersPanelLogic;
+using _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic;
 using _Main._Scripts.LetterPooLogic;
 using UnityEngine;
 
@@ -15,15 +16,17 @@ namespace _Main._Scripts.GameLogic.SwapTilesLogic
 
         private LettersPool _lettersPool;
         private NewLettersPanel _newLettersPanel;
+        private readonly FieldFacade _fieldFacade;
 
 
         public SwapTilesHandler(LettersPool lettersPool,
-            NewLettersPanel newLettersPanel, SwapTilesPanelView swapTilesPanelView)
+            NewLettersPanel newLettersPanel, FieldFacade fieldFacade,SwapTilesPanelView swapTilesPanelView)
         {
             _cells = swapTilesPanelView.Cells;
             _panel = swapTilesPanelView.Panel;
             _lettersPool = lettersPool;
             _newLettersPanel = newLettersPanel;
+            _fieldFacade = fieldFacade;
 
             swapTilesPanelView.AllTilesButton.onClick.AddListener(SelectAllCells);
             swapTilesPanelView.OpenPanelButton.onClick.AddListener(OpenPanel);
@@ -34,7 +37,12 @@ namespace _Main._Scripts.GameLogic.SwapTilesLogic
         }
 
 
-        private void OpenPanel() => _panel.SetActive(true);
+        private void OpenPanel()
+        {
+            _newLettersPanel.ReturnAllTilesIntoCells(_fieldFacade.GetCellsFromMovableTiles());
+            _fieldFacade.ClearMovableTiles();
+            _panel.SetActive(true);
+        }
 
         private void HidePanel()
         {
