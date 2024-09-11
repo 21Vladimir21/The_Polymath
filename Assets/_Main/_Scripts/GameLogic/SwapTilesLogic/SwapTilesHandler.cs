@@ -77,7 +77,7 @@ namespace _Main._Scripts.GameLogic.SwapTilesLogic
             foreach (var newLetterPanelCell in _newLettersPanel.Cells)
             {
                 if (!newLetterPanelCell.IsBusy) continue;
-                cell.AddTileAndAllowMove(newLetterPanelCell.CurrentTile);
+                cell.AddTileAndAllowMove(newLetterPanelCell.CurrentTile,false);
                 newLetterPanelCell.ClearTileData();
                 break;
             }
@@ -91,7 +91,7 @@ namespace _Main._Scripts.GameLogic.SwapTilesLogic
                 foreach (var panelCell in _cells)
                 {
                     if (!panelCell.IsBusy) continue;
-                    cell.AddTileAndAllowMove(panelCell.CurrentTile);
+                    cell.AddTileAndAllowMove(panelCell.CurrentTile,false);
                     panelCell.ClearTileData();
                     break;
                 }

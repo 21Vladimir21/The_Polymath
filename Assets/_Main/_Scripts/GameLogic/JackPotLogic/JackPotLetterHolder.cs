@@ -11,6 +11,7 @@ namespace _Main._Scripts.GameLogic.JackPotLogic
         [SerializeField] private Button button;
 
         public Action<LetterData> OnSelectLetter;
+        public LetterData LetterData => letterData;
 
         private void Awake() => button.onClick.AddListener(SelectLetter);
 

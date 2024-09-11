@@ -1,3 +1,4 @@
+using System;
 using _Main._Scripts.GameLogic.LettersLogic;
 using UnityEngine;
 
@@ -8,12 +9,14 @@ namespace _Main._Scripts.GameLogic.JackPotLogic
         [SerializeField] private JackPotLetterHolder[] holders;
         [SerializeField] private GameObject letterPanel;
         [SerializeField] private GameObject star;
-        
+
         private const int YPanelPosition = 130;
+        private LetterData _defaultData;
 
 
         private void Awake()
         {
+            _defaultData = letterData;
             foreach (var holder in holders)
                 holder.OnSelectLetter += ChangeLetterData;
         }
@@ -30,13 +33,28 @@ namespace _Main._Scripts.GameLogic.JackPotLogic
             letterText.text = "*";
             star.SetActive(false);
             pointsText.gameObject.SetActive(false);
-            letterData = null;
+            letterData = _defaultData;
         }
 
         public override void UpTile()
         {
             HideLetterPanel();
             base.UpTile();
+        }
+
+        public void SetLetterDataFromLetter(string letter)
+        {
+            var enumLetter = Enum.Parse<Letters>(letter);
+            if (enumLetter == Letters.JACKPOT)
+            {
+                HideLetterPanel();
+                return;
+            }
+            foreach (var holder in holders)
+                if (holder.LetterData.Letter.Equals(enumLetter))
+                    ChangeLetterData(holder.LetterData);
+
+            
         }
 
         private void OpenLetterPanel(int x)
@@ -52,7 +70,6 @@ namespace _Main._Scripts.GameLogic.JackPotLogic
         private void HideLetterPanel()
         {
             letterPanel.SetActive(false);
-         
         }
 
         private void ChangeLetterData(LetterData data)

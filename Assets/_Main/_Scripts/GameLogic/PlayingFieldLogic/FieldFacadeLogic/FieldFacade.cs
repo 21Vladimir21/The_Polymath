@@ -3,19 +3,23 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using _Main._Scripts.DictionaryLogic;
 using _Main._Scripts.GameDatas;
+using _Main._Scripts.GameLogic.JackPotLogic;
 using _Main._Scripts.GameLogic.LettersLogic;
 using _Main._Scripts.GameLogic.NewLettersPanelLogic;
 using _Main._Scripts.LetterPooLogic;
+using _Main._Scripts.Services;
+using _Main._Scripts.Services.Saves;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Tilemaps;
 
 namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
 {
     public class FieldFacade
     {
         public readonly List<PlayingFieldCell> LastPlacedTileCells = new();
-        
+
         public readonly UnityEvent<int> OnDecreaseRemainingTiles = new();
         public readonly UnityEvent<int> OnDecreaseRemainingPoints = new();
 
@@ -28,6 +32,7 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
         private readonly LettersPool _lettersPool;
 
         private PlayingFieldCell[,] _grid;
+        private readonly Saves _saves;
         private const int MaxGridLength = 15;
 
         public FieldFacade(PlayingField playingField, CurrentGameData currentGameData, SortingDictionary dictionary,
@@ -37,6 +42,9 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
             _currentGameData = currentGameData;
             _dictionary = dictionary;
             _lettersPool = lettersPool;
+            var savesService = ServiceLocator.Instance.GetServiceByType<SavesService>();
+            _saves = savesService.Saves;
+
 
             InitializeGrid();
 
@@ -58,6 +66,41 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
                 _grid[i, j].SetCellCoords(i, j);
             }
         }
+
+        public void LoadGridFromSave()
+        {
+            foreach (var cellFromSave in _saves.CellsData)
+            {
+                var coords = cellFromSave.Coords;
+
+                LetterTile tile;
+                if (cellFromSave.IsJackPotTile)
+                {
+                    tile = _lettersPool.GetTile(Letters.JACKPOT);
+                }
+                else
+                    tile = _lettersPool.GetTile(cellFromSave.Letter);
+
+                if (cellFromSave.CanMove)
+                {
+                    Debug.Log($"SEt movable tile");
+                    _grid[coords.x, coords.y].AddTileAndAllowMove(tile, false);
+                }
+                else
+                    _grid[coords.x, coords.y].AddTile(tile);
+
+                _grid[coords.x, coords.y].WasUsed = true;
+                
+                if (cellFromSave.InRightWord) tile.SetInWord();
+                var jackPotTile = tile as JackPotTile;
+                if (jackPotTile != null)
+                    jackPotTile.SetLetterDataFromLetter(cellFromSave.Letter);
+            }
+
+            UpdateFieldWords();
+        }
+
+        public void SaveGrid() => _saves.SaveGrid(_grid);
 
         public void ClearField()
         {
@@ -198,7 +241,6 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
                 tiles.Add(tile);
                 _grid[testStartIndexes[i].x, testStartIndexes[i].y].AddTile(tile);
                 tile.SetInWord();
-                tile.SetOnField(testStartIndexes[i]);
             }
 
             _currentGameData.CreatedWords.Add(new Word(tiles, true));

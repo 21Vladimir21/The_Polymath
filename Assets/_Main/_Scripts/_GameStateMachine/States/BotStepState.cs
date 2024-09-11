@@ -50,6 +50,7 @@ namespace _Main._Scripts._GameStateMachine.States
 
         public void Exit()
         {
+            _fieldFacade.SaveGrid();
         }
 
         public void Update()

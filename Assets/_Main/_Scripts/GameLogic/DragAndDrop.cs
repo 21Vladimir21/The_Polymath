@@ -2,11 +2,14 @@ using System;
 using _Main._Scripts.GameLogic.JackPotLogic;
 using _Main._Scripts.GameLogic.LettersLogic;
 using _Main._Scripts.GameLogic.NewLettersPanelLogic;
+using _Main._Scripts.Services;
+using _Main._Scripts.Services.Saves;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
 {
+    public Action OnFieldChanged;
     [SerializeField] private Canvas canvas;
 
     private readonly Camera _camera;
@@ -17,9 +20,9 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 
     private bool _isDragged;
     public Action<LetterTile> OnSwappedTiles;
+   
 
     public bool CanDrag { get; set; }
-
     public void OnPointerDown(PointerEventData eventData)
     {
         if (CanDrag == false) return;
@@ -66,7 +69,11 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
                  _selectedCell.CurrentTile is JackPotTile &&
                  _selectedCell.CurrentTile.Letter.Equals(_startDragCell.CurrentTile.Letter))
             SwapJackPotTile();
-        else if (_draggedObject != null) _startDragCell.ResetTilePosition();
+        else if (_draggedObject != null)
+        {
+            _startDragCell.ResetTilePosition();
+            OnFieldChanged?.Invoke();
+        }
 
         ClearDragState();
     }
@@ -80,20 +87,23 @@ public class DragAndDrop : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         _selectedCell.AddTile(_startDragCell.CurrentTile);
         _startDragCell.ClearTileData();
         OnSwappedTiles.Invoke(jackPotTile);
+        OnFieldChanged?.Invoke();
     }
 
     private void SwapTiles()
     {
         var tile = _selectedCell.CurrentTile;
         _selectedCell.ClearTileData();
-        RearrangeTile();
+        RearrangeTile(false);
         _startDragCell.AddTileAndAllowMove(tile);
+        OnFieldChanged?.Invoke();
     }
 
-    private void RearrangeTile()
+    private void RearrangeTile(bool saveField = true)
     {
         _selectedCell.AddTileAndAllowMove(_startDragCell.CurrentTile);
         _startDragCell.ClearTileData();
+        if (saveField) OnFieldChanged?.Invoke();
     }
 
     private void ClearDragState()

@@ -34,6 +34,6 @@ namespace _Main._Scripts.GameLogic
         Э,
         Ю,
         Я,
-        JackPot
+        JACKPOT
     }
 }

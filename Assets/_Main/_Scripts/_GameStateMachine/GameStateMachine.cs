@@ -27,7 +27,7 @@ namespace _Main._Scripts._GameStateMachine
 
             _states = new List<IState>
             {
-                new EntryState(this, fieldFacade,gameData),
+                new EntryState(this, fieldFacade,gameData,newLettersPanel),
                 new PlayerStepState(this, newLettersPanel, lettersPool, dictionary, dragAndDrop, gameData, fieldFacade),
                 new BotStepState(this, fieldFacade, settingsArray, gameData),
                 new ResultState(this,gameData,newLettersPanel),

@@ -18,15 +18,16 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
         public void SetCellCoords(int x, int y) => Coords = new Vector2Int(x, y);
 
 
-        public virtual void AddTileAndAllowMove(LetterTile tile)
+        public virtual void AddTileAndAllowMove(LetterTile tile, bool isField = true)
         {
-            AddTile(tile);
+            AddTile(tile,isField: isField);
             tile.ResetTile();
         }
 
-        public void AddTile(LetterTile tile, bool setPosition = true)
+        public void AddTile(LetterTile tile, bool setPosition = true,bool isField = true)
         {
             CurrentTile = tile;
+            if (isField) tile.SetOnField(Coords);
             IsBusy = true;
             if (setPosition) ResetTilePosition();
         }

@@ -168,7 +168,6 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
                     var playingFieldCell = _grid[coords.x, coords.y];
                     
                     playingFieldCell.AddTile(tile,false);
-                    tile.SetOnField(coords);
                     tile.SetInWord();
                     
                     tiles.Remove(tile);
@@ -221,7 +220,7 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
             {
                 var letter = charArray[j];
                 if (letter.Equals('-')) continue;
-                var tile = _lettersPool.GetTileFromChar(letter);
+                var tile = _lettersPool.GetTile(letter);
                 if (tile) foundedTiles.Add(tile);
                 else
                 {

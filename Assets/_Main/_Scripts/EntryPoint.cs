@@ -40,6 +40,10 @@ namespace _Main._Scripts
         {
             var uiLocator = new UILocator(uiViewsHolder);
             ServiceLocator.Instance.TryAddService(uiLocator);
+            
+            var savesService = ServiceLocator.Instance.GetServiceByType<SavesService>();
+            var saves = savesService.Saves;
+           
 
             _lettersPool = new LettersPool(_lettersPoolConfig, lettersParent);
             _gameStateMachine = new GameStateMachine(playingField, newLettersPanel, _lettersPool, dictionary,

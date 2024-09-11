@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using _Main._Scripts.DictionaryLogic;
 using _Main._Scripts.GameDatas;
 using _Main._Scripts.GameLogic;
@@ -12,7 +9,6 @@ using _Main._Scripts.Services;
 using _Main._Scripts.UI;
 using _Main._Scripts.UI.Views;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace _Main._Scripts._GameStateMachine.States
 {
@@ -50,16 +46,19 @@ namespace _Main._Scripts._GameStateMachine.States
             SwapTilesHandler swapTilesHandler = new(lettersPool, _newLettersPanel,_fieldFacade, _inGameView.SwapTilesPanelView);
             swapTilesHandler.OnSwapped += EndStep;
 
+            _dragAndDrop.OnFieldChanged += _fieldFacade.SaveGrid;
+            _dragAndDrop.OnFieldChanged += _newLettersPanel.SaveLetters;
+
             _inGameView.CheckWordsButton.onClick.AddListener(ValidateNewWords);
             _inGameView.ReturnLettersToPanelButton.onClick.AddListener(ReturnLettersToPanel);
             _inGameView.EndStepButton.onClick.AddListener(EndStep);
             _inGameView.MixTilesButton.onClick.AddListener(newLettersPanel.MixTheTiles);
+            
         }
 
         public void Enter()
         {
             _dragAndDrop.CanDrag = true;
-            _newLettersPanel.SetNewLettersInPanel();
             _inGameView.ShowPlayerPanel();
             _inGameView.UpdatePoints(_gameData.PlayerPoints,_gameData.PCPoints);
             _inGameView.SetInteractableButtons(true);

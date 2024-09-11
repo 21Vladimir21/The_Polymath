@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using _Main._Scripts.GameLogic.LettersLogic;
-using _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic;
 using _Main._Scripts.GameLogic.SwapTilesLogic;
 using _Main._Scripts.LetterPooLogic;
+using _Main._Scripts.Services;
+using _Main._Scripts.Services.Saves;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -14,21 +15,38 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
         [field: SerializeField] public List<NewLetterPanelCell> Cells { get; private set; }
 
         private LettersPool _lettersPool;
-        private SwapTilesPanelView _swapTilesPanelView;
+        private Saves _saves;
 
         public void Initialize(LettersPool lettersPool)
         {
             _lettersPool = lettersPool;
+            
+            var savesService = ServiceLocator.Instance.GetServiceByType<SavesService>();
+            _saves = savesService.Saves;
         }
+        
+        
 
+        public void SaveLetters() => _saves.SaveLetterInPanel(Cells);
+
+        public void SetLettersFromSave()
+        {
+            foreach (var letter in _saves.LettersInPanel)
+            {
+                var tile = _lettersPool.GetTile(letter);
+                ReturnTileToFreeCell(tile);
+            }
+        }
         public void SetNewLettersInPanel()
         {
             var freeCells = GetFreeCells();
             foreach (var cell in freeCells)
             {
                 var tile = _lettersPool.GetRandomTile();
-                cell.AddTileAndAllowMove(tile);
+                cell.AddTileAndAllowMove(tile,false);
             }
+            
+            SaveLetters();
         }
 
         public void ReturnAllTilesIntoCells(List<PlayingFieldCell> cells)
@@ -88,7 +106,7 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
         public void ReturnTileToFreeCell(LetterTile tile)
         {
             var freeCells = GetFreeCells();
-            freeCells[0].AddTileAndAllowMove(tile);
+            freeCells[0].AddTileAndAllowMove(tile,false);
         }
 
         public void UpAndShakeAllTiles()
@@ -103,20 +121,6 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
             foreach (var cell in Cells)
                 if (cell.IsBusy)
                     cell.DownAndStopShake();
-        }
-
-        private List<Letters> CreateRandomLettersList(int count)
-        {
-            List<Letters> randomLettersArray = new();
-            var letters = Enum.GetValues(typeof(Letters));
-            for (int i = 0; i < count; i++)
-            {
-                var randomIndex = Random.Range(0, letters.Length);
-                var randomLetter = (Letters)letters.GetValue(randomIndex);
-                randomLettersArray.Add(randomLetter);
-            }
-
-            return randomLettersArray;
         }
     }
 }

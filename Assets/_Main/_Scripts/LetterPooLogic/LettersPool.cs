@@ -34,8 +34,12 @@ namespace _Main._Scripts.LetterPooLogic
                 }
             }
         }
-
-        public LetterTile GetTileFromChar(char letter)
+        public LetterTile GetTile(string letter)
+        {
+            var enumLetter = Enum.Parse<Letters>(letter.ToUpper());
+            return GetTile(enumLetter);
+        }
+        public LetterTile GetTile(char letter)
         {
             var enumLetter = Enum.Parse<Letters>(letter.ToString().ToUpper());
             return GetTile(enumLetter);
