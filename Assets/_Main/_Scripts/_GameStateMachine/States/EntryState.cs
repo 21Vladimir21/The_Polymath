@@ -4,6 +4,7 @@ using _Main._Scripts.GameLogic;
 using _Main._Scripts.GameLogic.NewLettersPanelLogic;
 using _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic;
 using _Main._Scripts.Services;
+using _Main._Scripts.Services.FaderService;
 using _Main._Scripts.Services.Saves;
 using _Main._Scripts.UI;
 using _Main._Scripts.UI.Views;
@@ -20,6 +21,7 @@ namespace _Main._Scripts._GameStateMachine.States
         private readonly CurrentGameData _currentGameData;
         private readonly NewLettersPanel _newLettersPanel;
         private readonly Saves _saves;
+        private readonly FadeService _fadeService;
 
         public EntryState(IStateSwitcher stateSwitcher, FieldFacade fieldFacade, CurrentGameData currentGameData,
             NewLettersPanel newLettersPanel)
@@ -34,6 +36,8 @@ namespace _Main._Scripts._GameStateMachine.States
             var savesService = ServiceLocator.Instance.GetServiceByType<SavesService>();
             _saves = savesService.Saves;
 
+            _fadeService = ServiceLocator.Instance.GetServiceByType<FadeService>();
+
             _complexityView.StartGameButton.onClick.AddListener(StartNewGame);
 
             var complexityHandler = new ChooseComplexityHandler(_complexityView.ComplexityButtons, _currentGameData);
@@ -45,8 +49,9 @@ namespace _Main._Scripts._GameStateMachine.States
             if (_saves.HasStartGame)
             {
                 _newLettersPanel.SetLettersFromSave();
-                _stateSwitcher.SwitchState<PlayerStepState>();
                 _fieldFacade.LoadGridFromSave();
+                _fadeService.EnableFade(() => _stateSwitcher.SwitchState<PlayerStepState>());
+
             }
             else
             {
@@ -69,7 +74,7 @@ namespace _Main._Scripts._GameStateMachine.States
             _fieldFacade.ClearField();
             _fieldFacade.CreateRandomStartWord();
             _newLettersPanel.SetNewLettersInPanel();
-            _stateSwitcher.SwitchState<PlayerStepState>();
+            _fadeService.EnableFade(() => _stateSwitcher.SwitchState<PlayerStepState>());
             _saves.HasStartGame = true;
         }
     }

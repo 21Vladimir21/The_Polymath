@@ -1,8 +1,8 @@
 {
     "<AdEnabled>k__BackingField": true,
-    "<PlayerPoints>k__BackingField": 5,
-    "<BotPoints>k__BackingField": 9,
-    "<HasStartGame>k__BackingField": true,
+    "<PlayerPoints>k__BackingField": 0,
+    "<BotPoints>k__BackingField": 0,
+    "<HasStartGame>k__BackingField": false,
     "<CellsData>k__BackingField": [
         {
             "Coords": {
@@ -256,12 +256,12 @@
         }
     ],
     "<LettersInPanel>k__BackingField": [
-        "JACKPOT",
-        "Ч",
-        "JACKPOT",
-        "Р",
-        "Р",
+        "Ь",
+        "А",
+        "Щ",
+        "Ю",
         "И",
-        "М"
+        "Н",
+        "Г"
     ]
 }

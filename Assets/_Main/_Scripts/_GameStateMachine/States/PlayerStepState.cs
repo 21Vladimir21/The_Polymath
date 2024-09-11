@@ -6,6 +6,8 @@ using _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic;
 using _Main._Scripts.GameLogic.SwapTilesLogic;
 using _Main._Scripts.LetterPooLogic;
 using _Main._Scripts.Services;
+using _Main._Scripts.Services.FaderService;
+using _Main._Scripts.Services.Saves;
 using _Main._Scripts.UI;
 using _Main._Scripts.UI.Views;
 using UnityEngine;
@@ -22,6 +24,8 @@ namespace _Main._Scripts._GameStateMachine.States
         private readonly WordValidationHandler _wordValidationHandler;
         private readonly ValidationWordsView _validationWordsView;
         private readonly InGameView _inGameView;
+        private readonly Saves _saves;
+        private readonly FadeService _fadeService;
 
         public PlayerStepState(IStateSwitcher stateSwitcher, NewLettersPanel newLettersPanel,
             LettersPool lettersPool, SortingDictionary dictionary, DragAndDrop dragAndDrop,
@@ -42,8 +46,13 @@ namespace _Main._Scripts._GameStateMachine.States
             var locator = ServiceLocator.Instance.GetServiceByType<UILocator>();
             _validationWordsView = locator.GetViewByType<ValidationWordsView>();
             _inGameView = locator.GetViewByType<InGameView>();
+            var savesService = ServiceLocator.Instance.GetServiceByType<SavesService>();
+            _saves = savesService.Saves;
 
-            SwapTilesHandler swapTilesHandler = new(lettersPool, _newLettersPanel,_fieldFacade, _inGameView.SwapTilesPanelView);
+            _fadeService = ServiceLocator.Instance.GetServiceByType<FadeService>();
+
+            SwapTilesHandler swapTilesHandler =
+                new(lettersPool, _newLettersPanel, _fieldFacade, _inGameView.SwapTilesPanelView);
             swapTilesHandler.OnSwapped += EndStep;
 
             _dragAndDrop.OnFieldChanged += _fieldFacade.SaveGrid;
@@ -53,16 +62,15 @@ namespace _Main._Scripts._GameStateMachine.States
             _inGameView.ReturnLettersToPanelButton.onClick.AddListener(ReturnLettersToPanel);
             _inGameView.EndStepButton.onClick.AddListener(EndStep);
             _inGameView.MixTilesButton.onClick.AddListener(newLettersPanel.MixTheTiles);
-            
+            _inGameView.MenuButton.onClick.AddListener(ToSelectComplexity);
         }
 
         public void Enter()
         {
             _dragAndDrop.CanDrag = true;
             _inGameView.ShowPlayerPanel();
-            _inGameView.UpdatePoints(_gameData.PlayerPoints,_gameData.PCPoints);
+            _inGameView.UpdatePoints(_gameData.PlayerPoints, _gameData.PCPoints);
             _inGameView.SetInteractableButtons(true);
-            
         }
 
         public void Exit()
@@ -70,10 +78,11 @@ namespace _Main._Scripts._GameStateMachine.States
             _inGameView.SetInteractableButtons(false);
             _newLettersPanel.ReturnAllTilesIntoCells(_fieldFacade.GetCellsFromNotRightTiles());
             _fieldFacade.ClearNotRightTiles();
-            _dragAndDrop.CanDrag = false;
             _fieldFacade.UpdateFieldWords();
             _newLettersPanel.SetNewLettersInPanel();
+            _dragAndDrop.CanDrag = false;
         }
+
 
         public void Update()
         {
@@ -97,6 +106,12 @@ namespace _Main._Scripts._GameStateMachine.States
                 _stateSwitcher.SwitchState<ResultState>();
             else
                 _stateSwitcher.SwitchState<BotStepState>();
+        }
+
+        private void ToSelectComplexity()
+        {
+            _saves.HasStartGame = false;
+            _fadeService.EnableFade(() => _stateSwitcher.SwitchState<EntryState>());
         }
 
         private void ReturnLettersToPanel()

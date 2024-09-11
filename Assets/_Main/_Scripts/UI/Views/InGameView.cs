@@ -19,6 +19,7 @@ namespace _Main._Scripts.UI.Views
         [field: SerializeField] public Button ReturnLettersToPanelButton { get; private set; }
         [field: SerializeField] public Button MixTilesButton { get; private set; }
         [field: SerializeField] public SwapTilesPanelView SwapTilesPanelView { get; private set; }
+        [field: SerializeField] public Button MenuButton { get; private set; }
 
         [Header("Settings")] [SerializeField] private int showStepPanelsDuration = 1;
 
