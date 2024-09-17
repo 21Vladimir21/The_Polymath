@@ -9,6 +9,7 @@ using _Main._Scripts.LetterPooLogic;
 using _Main._Scripts.Services;
 using _Main._Scripts.Services.FaderService;
 using _Main._Scripts.UI;
+using _Main._Scripts.UI.InfoPanel;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -17,19 +18,20 @@ namespace _Main._Scripts
     public class EntryPoint : MonoBehaviour
     {
         [SerializeField] private DragAndDrop dragAndDrop;
-        [SerializeField] private FadeService _fadeService;
 
         [SerializeField] private PlayingField playingField;
-
-        [SerializeField] private Transform lettersParent;
         [SerializeField] private NewLettersPanel newLettersPanel;
+        [SerializeField] private Transform lettersParent;
+
+        [SerializeField] private LettersPoolConfig lettersPoolConfig;
         [SerializeField] private SortingDictionary dictionary;
-        [SerializeField] private LettersDataHolder _lettersDataHolder;
-        [SerializeField] private List<BotComplexitySettings> _botComplexitySettings;
+
+        [SerializeField] private LettersDataHolder lettersDataHolder;
+        [SerializeField] private BotComplexityHolder botComplexityHolder;
+        [SerializeField] private InfosHolder infosHolder;
+
         [SerializeField] private UIViewsHolder uiViewsHolder;
-
-        [SerializeField] private LettersPoolConfig _lettersPoolConfig;
-
+        [SerializeField] private FadeService fadeService;
 
         private GameStateMachine _gameStateMachine;
         private LettersPool _lettersPool;
@@ -39,29 +41,17 @@ namespace _Main._Scripts
         {
             var uiLocator = new UILocator(uiViewsHolder);
             ServiceLocator.Instance.TryAddService(uiLocator);
-            ServiceLocator.Instance.TryAddService(_fadeService);
+            ServiceLocator.Instance.TryAddService(fadeService);
 
-            _lettersPool = new LettersPool(_lettersPoolConfig, lettersParent);
+            _lettersPool = new LettersPool(lettersPoolConfig, lettersParent);
+            var infoHandler = new InfoPanelHandler(infosHolder);
             _gameStateMachine = new GameStateMachine(playingField, newLettersPanel, _lettersPool, dictionary,
-                dragAndDrop, _lettersDataHolder, _botComplexitySettings.ToArray());
+                dragAndDrop, lettersDataHolder, botComplexityHolder,infoHandler);
         }
 
         private void Update()
         {
             _gameStateMachine.Update();
         }
-
-#if UNITY_EDITOR
-
-        private const int MaxComplexitiesCount = 3;
-        private void OnValidate()
-        {
-            if (_botComplexitySettings.Count > MaxComplexitiesCount)
-            {
-                _botComplexitySettings.RemoveRange(MaxComplexitiesCount,
-                    _botComplexitySettings.Count - MaxComplexitiesCount);
-            }
-        }
-#endif
     }
 }

@@ -114,6 +114,7 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
                     cell.ClearTileData();
                 }
             }
+            LastPlacedTileCells.Clear();
         }
 
 

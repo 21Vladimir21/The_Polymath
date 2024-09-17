@@ -4,6 +4,7 @@ using _Main._Scripts.GameDatas;
 using _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic;
 using _Main._Scripts.Services;
 using _Main._Scripts.UI;
+using _Main._Scripts.UI.InfoPanel;
 using _Main._Scripts.UI.Views;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -16,20 +17,26 @@ namespace _Main._Scripts._GameStateMachine.States
         private readonly FieldFacade _fieldFacade;
         private readonly BotComplexitySettings[] _complexitySettings;
         private readonly CurrentGameData _gameData;
+        private readonly InfoPanelHandler _infoPanel;
 
-        private const int MaxTiles = 7;
-        private int _remainedTiles;
-        private int _remainedPoints;
         private BotComplexitySettings _currentComplexity;
         private readonly InGameView _inGameView;
 
+        private const int MaxTiles = 7;
+        private const int PointForAllTiles = 15;
+
+        private int _remainedTiles;
+        private int _remainedPoints;
+
+
         public BotStepState(IStateSwitcher stateSwitcher, FieldFacade fieldFacade,
-            BotComplexitySettings[] complexitySettings, CurrentGameData gameData)
+            BotComplexityHolder complexityHolder, CurrentGameData gameData, InfoPanelHandler infoPanel)
         {
             _stateSwitcher = stateSwitcher;
             _fieldFacade = fieldFacade;
-            _complexitySettings = complexitySettings;
+            _complexitySettings = complexityHolder.BotComplexitySettings.ToArray();
             _gameData = gameData;
+            _infoPanel = infoPanel;
             _fieldFacade.OnDecreaseRemainingTiles.AddListener(UpdateRemainingTiles);
             _fieldFacade.OnDecreaseRemainingPoints.AddListener(UpdateRemainingPoints);
 
@@ -43,15 +50,17 @@ namespace _Main._Scripts._GameStateMachine.States
             SetComplexity();
             SetRemainedPoints();
             SetRemainedTiles();
-            _inGameView.ShowBotPanel(PlaceWords);
-            _inGameView.UpdatePoints(_gameData.PlayerPoints, _gameData.PCPoints);
+            _infoPanel.ShowPanelWithInfo(InfoKey.BotStep, PlaceWords);
+            _inGameView.UpdatePoints(_gameData.PlayerPoints, _gameData.BotPoints);
             //TODO: Добавить проверку на то сколько осталось плиток в пуле 
         }
 
         public void Exit()
         {
+            _gameData.BotPoints += _remainedTiles <= 0 ? PointForAllTiles : 0;
             _fieldFacade.SaveGrid();
         }
+
 
         public void Update()
         {
@@ -65,7 +74,7 @@ namespace _Main._Scripts._GameStateMachine.States
                 return;
             }
 
-            foreach (var cell in _fieldFacade.LastPlacedTileCells) 
+            foreach (var cell in _fieldFacade.LastPlacedTileCells)
                 cell.AnimatedMoveTileToCell(() => cell.ActivateShine(callback));
 
             _fieldFacade.LastPlacedTileCells.Clear();
@@ -89,14 +98,30 @@ namespace _Main._Scripts._GameStateMachine.States
                         break;
             }
 
-
-            MoveTilesToCellsAndActivateCellShine(() =>
+            if (_gameData.GameStarted == false) return;
+            if (_remainedTiles >= _currentComplexity.MaxTilesPerStep)
             {
-                if (_gameData.HasBeenRequiredPoints)
-                    _stateSwitcher.SwitchState<ResultState>();
-                else
-                    _stateSwitcher.SwitchState<PlayerStepState>();
-            });
+                _infoPanel.ShowPanelWithKeyRange(InfoKey.BotSwapTiles, InfoKey.BotMissedStep, () =>
+                {
+                    MoveTilesToCellsAndActivateCellShine(() =>
+                    {
+                        if (_gameData.HasBeenRequiredPoints)
+                            _stateSwitcher.SwitchState<ResultState>();
+                        else
+                            _stateSwitcher.SwitchState<PlayerStepState>();
+                    });
+                });
+            }
+            else
+            {
+                MoveTilesToCellsAndActivateCellShine(() =>
+                {
+                    if (_gameData.HasBeenRequiredPoints)
+                        _stateSwitcher.SwitchState<ResultState>();
+                    else
+                        _stateSwitcher.SwitchState<PlayerStepState>();
+                });
+            }
         }
 
         private void SetComplexity(bool setForce = false)
@@ -105,10 +130,7 @@ namespace _Main._Scripts._GameStateMachine.States
             {
                 foreach (var setting in _complexitySettings)
                     if (setting.Complexity.Equals(_gameData.Complexity))
-                    {
                         _currentComplexity = setting;
-                        Debug.Log($"Установленная сложность {_gameData.Complexity.ToString()}");
-                    }
             }
         }
 

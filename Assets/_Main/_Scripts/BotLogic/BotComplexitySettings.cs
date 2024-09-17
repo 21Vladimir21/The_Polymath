@@ -3,9 +3,10 @@ using UnityEngine;
 
 namespace _Main._Scripts.BotLogic
 {
-    [CreateAssetMenu(fileName = "BotSettings", menuName = "NewBotSettings", order = 0)]
-    public class BotComplexitySettings : ScriptableObject
+    [Serializable]
+    public class BotComplexitySettings
     {
+        [HideInInspector] public string name;
         [field: SerializeField] public BotComplexity Complexity { get; private set; }
 
         [field: SerializeField, Range(0, 100)] public int ChanceUseAllTiles { get; private set; }
@@ -13,9 +14,9 @@ namespace _Main._Scripts.BotLogic
         [field: SerializeField] public PointsChances[] Chances { get; private set; }
 
 #if UNITY_EDITOR
-
-        private void OnValidate()
+        public void SetNames()
         {
+            name = Complexity.ToString();
             for (int i = 0; i < Chances.Length; i++)
             {
                 var chance = Chances[i];

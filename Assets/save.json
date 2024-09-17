@@ -7,7 +7,7 @@
         {
             "Coords": {
                 "x": 1,
-                "y": 1
+                "y": 6
             },
             "Letter": "А",
             "InRightWord": true,
@@ -17,7 +17,7 @@
         {
             "Coords": {
                 "x": 1,
-                "y": 2
+                "y": 7
             },
             "Letter": "Д",
             "InRightWord": true,
@@ -27,9 +27,9 @@
         {
             "Coords": {
                 "x": 2,
-                "y": 1
+                "y": 7
             },
-            "Letter": "Г",
+            "Letter": "О",
             "InRightWord": true,
             "CanMove": false,
             "IsJackPotTile": false
@@ -37,7 +37,7 @@
         {
             "Coords": {
                 "x": 3,
-                "y": 1
+                "y": 6
             },
             "Letter": "А",
             "InRightWord": true,
@@ -47,67 +47,47 @@
         {
             "Coords": {
                 "x": 3,
-                "y": 2
-            },
-            "Letter": "Р",
-            "InRightWord": true,
-            "CanMove": false,
-            "IsJackPotTile": false
-        },
-        {
-            "Coords": {
-                "x": 3,
-                "y": 3
-            },
-            "Letter": "Г",
-            "InRightWord": true,
-            "CanMove": false,
-            "IsJackPotTile": false
-        },
-        {
-            "Coords": {
-                "x": 3,
-                "y": 4
-            },
-            "Letter": "О",
-            "InRightWord": true,
-            "CanMove": false,
-            "IsJackPotTile": false
-        },
-        {
-            "Coords": {
-                "x": 4,
-                "y": 4
-            },
-            "Letter": "Б",
-            "InRightWord": true,
-            "CanMove": false,
-            "IsJackPotTile": false
-        },
-        {
-            "Coords": {
-                "x": 4,
-                "y": 5
-            },
-            "Letter": "У",
-            "InRightWord": true,
-            "CanMove": false,
-            "IsJackPotTile": false
-        },
-        {
-            "Coords": {
-                "x": 4,
-                "y": 6
-            },
-            "Letter": "Г",
-            "InRightWord": true,
-            "CanMove": false,
-            "IsJackPotTile": false
-        },
-        {
-            "Coords": {
-                "x": 4,
                 "y": 7
+            },
+            "Letter": "Н",
+            "InRightWord": true,
+            "CanMove": false,
+            "IsJackPotTile": false
+        },
+        {
+            "Coords": {
+                "x": 3,
+                "y": 8
+            },
+            "Letter": "К",
+            "InRightWord": true,
+            "CanMove": false,
+            "IsJackPotTile": false
+        },
+        {
+            "Coords": {
+                "x": 4,
+                "y": 8
+            },
+            "Letter": "А",
+            "InRightWord": true,
+            "CanMove": false,
+            "IsJackPotTile": false
+        },
+        {
+            "Coords": {
+                "x": 5,
+                "y": 8
+            },
+            "Letter": "Т",
+            "InRightWord": true,
+            "CanMove": false,
+            "IsJackPotTile": false
+        },
+        {
+            "Coords": {
+                "x": 5,
+                "y": 9
             },
             "Letter": "И",
             "InRightWord": true,
@@ -116,8 +96,8 @@
         },
         {
             "Coords": {
-                "x": 5,
-                "y": 3
+                "x": 6,
+                "y": 6
             },
             "Letter": "Й",
             "InRightWord": true,
@@ -126,30 +106,20 @@
         },
         {
             "Coords": {
-                "x": 5,
+                "x": 6,
+                "y": 8
+            },
+            "Letter": "И",
+            "InRightWord": true,
+            "CanMove": false,
+            "IsJackPotTile": false
+        },
+        {
+            "Coords": {
+                "x": 7,
                 "y": 4
             },
-            "Letter": "О",
-            "InRightWord": true,
-            "CanMove": false,
-            "IsJackPotTile": false
-        },
-        {
-            "Coords": {
-                "x": 5,
-                "y": 7
-            },
-            "Letter": "Н",
-            "InRightWord": true,
-            "CanMove": false,
-            "IsJackPotTile": false
-        },
-        {
-            "Coords": {
-                "x": 6,
-                "y": 7
-            },
-            "Letter": "Н",
+            "Letter": "С",
             "InRightWord": true,
             "CanMove": false,
             "IsJackPotTile": false
@@ -159,7 +129,7 @@
                 "x": 7,
                 "y": 6
             },
-            "Letter": "З",
+            "Letter": "О",
             "InRightWord": true,
             "CanMove": false,
             "IsJackPotTile": false
@@ -169,7 +139,7 @@
                 "x": 7,
                 "y": 7
             },
-            "Letter": "У",
+            "Letter": "Б",
             "InRightWord": true,
             "CanMove": false,
             "IsJackPotTile": false
@@ -179,7 +149,17 @@
                 "x": 7,
                 "y": 8
             },
-            "Letter": "Д",
+            "Letter": "О",
+            "InRightWord": true,
+            "CanMove": false,
+            "IsJackPotTile": false
+        },
+        {
+            "Coords": {
+                "x": 7,
+                "y": 9
+            },
+            "Letter": "З",
             "InRightWord": true,
             "CanMove": false,
             "IsJackPotTile": false
@@ -189,7 +169,7 @@
                 "x": 8,
                 "y": 4
             },
-            "Letter": "А",
+            "Letter": "Б",
             "InRightWord": true,
             "CanMove": false,
             "IsJackPotTile": false
@@ -199,7 +179,7 @@
                 "x": 8,
                 "y": 5
             },
-            "Letter": "Н",
+            "Letter": "О",
             "InRightWord": true,
             "CanMove": false,
             "IsJackPotTile": false
@@ -209,7 +189,37 @@
                 "x": 8,
                 "y": 6
             },
-            "Letter": "А",
+            "Letter": "Г",
+            "InRightWord": true,
+            "CanMove": false,
+            "IsJackPotTile": false
+        },
+        {
+            "Coords": {
+                "x": 8,
+                "y": 8
+            },
+            "Letter": "Н",
+            "InRightWord": true,
+            "CanMove": false,
+            "IsJackPotTile": false
+        },
+        {
+            "Coords": {
+                "x": 9,
+                "y": 3
+            },
+            "Letter": "Й",
+            "InRightWord": true,
+            "CanMove": false,
+            "IsJackPotTile": false
+        },
+        {
+            "Coords": {
+                "x": 9,
+                "y": 4
+            },
+            "Letter": "О",
             "InRightWord": true,
             "CanMove": false,
             "IsJackPotTile": false
@@ -219,26 +229,6 @@
                 "x": 9,
                 "y": 6
             },
-            "Letter": "Л",
-            "InRightWord": true,
-            "CanMove": false,
-            "IsJackPotTile": false
-        },
-        {
-            "Coords": {
-                "x": 10,
-                "y": 5
-            },
-            "Letter": "С",
-            "InRightWord": true,
-            "CanMove": false,
-            "IsJackPotTile": false
-        },
-        {
-            "Coords": {
-                "x": 10,
-                "y": 6
-            },
             "Letter": "А",
             "InRightWord": true,
             "CanMove": false,
@@ -247,21 +237,21 @@
         {
             "Coords": {
                 "x": 10,
-                "y": 7
+                "y": 4
             },
-            "Letter": "Д",
+            "Letter": "Й",
             "InRightWord": true,
             "CanMove": false,
-            "IsJackPotTile": true
+            "IsJackPotTile": false
         }
     ],
     "<LettersInPanel>k__BackingField": [
-        "Ь",
-        "А",
-        "Щ",
-        "Ю",
+        "М",
+        "Я",
+        "Д",
+        "Т",
         "И",
-        "Н",
-        "Г"
+        "И",
+        "В"
     ]
 }

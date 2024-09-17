@@ -1,3 +1,4 @@
+using _Main._Scripts.GameLogic.LettersLogic;
 using DG.Tweening;
 using UnityEngine;
 
@@ -10,6 +11,10 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
         private Sequence _shakeSequence;
         private bool _isShaking;
 
+        public override void AddTileAndAllowMove(LetterTile tile, bool isField = true)
+        {
+            base.AddTileAndAllowMove(tile, false);
+        }
 
         public override void ResetTilePosition()
         {

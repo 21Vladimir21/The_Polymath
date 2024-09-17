@@ -11,17 +11,12 @@ namespace _Main._Scripts.UI.Views
     {
         [SerializeField] private TMP_Text playerPointsText;
         [SerializeField] private TMP_Text botPointsText;
-        [SerializeField] private GameObject playerStepPanel;
-        [SerializeField] private GameObject botStepPanel;
-
         [field: SerializeField] public Button CheckWordsButton { get; private set; }
         [field: SerializeField] public Button EndStepButton { get; private set; }
         [field: SerializeField] public Button ReturnLettersToPanelButton { get; private set; }
         [field: SerializeField] public Button MixTilesButton { get; private set; }
         [field: SerializeField] public SwapTilesPanelView SwapTilesPanelView { get; private set; }
-        [field: SerializeField] public Button MenuButton { get; private set; }
-
-        [Header("Settings")] [SerializeField] private int showStepPanelsDuration = 1;
+        [field: SerializeField] public MenuPanel MenuPanel { get; private set; }
 
 
         public void UpdatePoints(int playerPoints, int botPoints)
@@ -30,22 +25,13 @@ namespace _Main._Scripts.UI.Views
             botPointsText.text = botPoints + "\nочков";
         }
 
-        public void ShowPlayerPanel(Action callback = null) => StartCoroutine(ShowPanelRoutine(playerStepPanel,callback));
-        public void ShowBotPanel(Action callback = null) => StartCoroutine(ShowPanelRoutine(botStepPanel,callback));
-        
+
         public void SetInteractableButtons(bool interactable)
         {
             CheckWordsButton.interactable = interactable;
             EndStepButton.interactable = interactable;
             ReturnLettersToPanelButton.interactable = interactable;
             SwapTilesPanelView.OpenPanelButton.interactable = interactable;
-        }
-        private IEnumerator ShowPanelRoutine(GameObject panel,Action callBack)
-        {
-            panel.gameObject.SetActive(true);
-            yield return new WaitForSeconds(showStepPanelsDuration);
-            panel.gameObject.SetActive(false);
-            callBack?.Invoke();
         }
     }
 }

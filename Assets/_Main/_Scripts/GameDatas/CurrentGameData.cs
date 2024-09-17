@@ -10,6 +10,7 @@ namespace _Main._Scripts.GameDatas
     {
         public BotComplexity Complexity { get; private set; }
         public List<Word> CreatedWords { get; private set; } = new();
+        public bool GameStarted => _saves.HasStartGame;
 
         public int PlayerPoints
         {
@@ -17,7 +18,7 @@ namespace _Main._Scripts.GameDatas
             set => _saves.PlayerPoints = value;
         }
 
-        public int PCPoints
+        public int BotPoints
         {
             get => _saves.BotPoints;
             set => _saves.BotPoints = value;
@@ -35,11 +36,11 @@ namespace _Main._Scripts.GameDatas
             if (_saves.HasStartGame)
             {
                 PlayerPoints = _saves.PlayerPoints;
-                PCPoints = _saves.BotPoints;
+                BotPoints = _saves.BotPoints;
             }
         }
 
-        public bool HasBeenRequiredPoints => PlayerPoints >= PointsToWin || PCPoints >= PointsToWin;
+        public bool HasBeenRequiredPoints => PlayerPoints >= PointsToWin || BotPoints >= PointsToWin;
 
         public void AddNewWords(List<Word> words)
         {
@@ -53,7 +54,7 @@ namespace _Main._Scripts.GameDatas
         {
             CreatedWords.Clear();
             PlayerPoints = 0;
-            PCPoints = 0;
+            BotPoints = 0;
         }
     }
 }

@@ -9,6 +9,7 @@ using _Main._Scripts.Services;
 using _Main._Scripts.Services.FaderService;
 using _Main._Scripts.Services.Saves;
 using _Main._Scripts.UI;
+using _Main._Scripts.UI.InfoPanel;
 using _Main._Scripts.UI.Views;
 using UnityEngine;
 
@@ -21,22 +22,25 @@ namespace _Main._Scripts._GameStateMachine.States
         private readonly DragAndDrop _dragAndDrop;
         private readonly CurrentGameData _gameData;
         private readonly FieldFacade _fieldFacade;
+        private readonly InfoPanelHandler _infoPanel;
         private readonly WordValidationHandler _wordValidationHandler;
         private readonly ValidationWordsView _validationWordsView;
         private readonly InGameView _inGameView;
         private readonly Saves _saves;
         private readonly FadeService _fadeService;
 
+        private const int PointForAllTiles = 15;
+
         public PlayerStepState(IStateSwitcher stateSwitcher, NewLettersPanel newLettersPanel,
-            LettersPool lettersPool, SortingDictionary dictionary, DragAndDrop dragAndDrop,
-            CurrentGameData gameData,
-            FieldFacade fieldFacade)
+            LettersPool lettersPool, SortingDictionary dictionary, DragAndDrop dragAndDrop, CurrentGameData gameData,
+            FieldFacade fieldFacade, InfoPanelHandler infoPanel)
         {
             _stateSwitcher = stateSwitcher;
             _newLettersPanel = newLettersPanel;
             _dragAndDrop = dragAndDrop;
             _gameData = gameData;
             _fieldFacade = fieldFacade;
+            _infoPanel = infoPanel;
 
             _newLettersPanel.Initialize(lettersPool);
             _wordValidationHandler = new WordValidationHandler(dictionary, fieldFacade, gameData);
@@ -62,15 +66,17 @@ namespace _Main._Scripts._GameStateMachine.States
             _inGameView.ReturnLettersToPanelButton.onClick.AddListener(ReturnLettersToPanel);
             _inGameView.EndStepButton.onClick.AddListener(EndStep);
             _inGameView.MixTilesButton.onClick.AddListener(newLettersPanel.MixTheTiles);
-            _inGameView.MenuButton.onClick.AddListener(ToSelectComplexity);
+            _inGameView.MenuPanel.MenuButton.onClick.AddListener(ToSelectComplexity);
         }
 
         public void Enter()
         {
-            _dragAndDrop.CanDrag = true;
-            _inGameView.ShowPlayerPanel();
-            _inGameView.UpdatePoints(_gameData.PlayerPoints, _gameData.PCPoints);
-            _inGameView.SetInteractableButtons(true);
+            _inGameView.UpdatePoints(_gameData.PlayerPoints, _gameData.BotPoints);
+            _infoPanel.ShowPanelWithInfo(InfoKey.PlayerStep, () =>
+            {
+                _dragAndDrop.CanDrag = true;
+                _inGameView.SetInteractableButtons(true);
+            });
         }
 
         public void Exit()
@@ -100,7 +106,9 @@ namespace _Main._Scripts._GameStateMachine.States
             int points = 0;
             _wordValidationHandler.CheckingGridForCorrectnessWords(ref points, true, out var _);
             Debug.Log($"Очки за ход: {points}");
-            _gameData.PlayerPoints += points;
+
+            var remainedTiles = _newLettersPanel.GetTilesCout();
+            _gameData.PlayerPoints += points + (remainedTiles <= 0 ? PointForAllTiles : 0);
 
             if (_gameData.HasBeenRequiredPoints)
                 _stateSwitcher.SwitchState<ResultState>();

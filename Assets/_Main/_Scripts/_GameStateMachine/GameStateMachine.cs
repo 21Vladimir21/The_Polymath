@@ -9,6 +9,7 @@ using _Main._Scripts.GameLogic.NewLettersPanelLogic;
 using _Main._Scripts.GameLogic.PlayingFieldLogic;
 using _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic;
 using _Main._Scripts.LetterPooLogic;
+using _Main._Scripts.UI.InfoPanel;
 
 namespace _Main._Scripts._GameStateMachine
 {
@@ -20,7 +21,7 @@ namespace _Main._Scripts._GameStateMachine
 
         public GameStateMachine(PlayingField playingField, NewLettersPanel newLettersPanel, LettersPool lettersPool,
             SortingDictionary dictionary, DragAndDrop dragAndDrop, LettersDataHolder lettersDataHolder,
-            BotComplexitySettings[] settingsArray)
+           BotComplexityHolder complexityHolder,InfoPanelHandler infoHandler)
         {
             var gameData = new CurrentGameData();
             var fieldFacade = new FieldFacade(playingField, gameData, dictionary, lettersPool, lettersDataHolder);
@@ -28,8 +29,8 @@ namespace _Main._Scripts._GameStateMachine
             _states = new List<IState>
             {
                 new EntryState(this, fieldFacade,gameData,newLettersPanel),
-                new PlayerStepState(this, newLettersPanel, lettersPool, dictionary, dragAndDrop, gameData, fieldFacade),
-                new BotStepState(this, fieldFacade, settingsArray, gameData),
+                new PlayerStepState(this, newLettersPanel, lettersPool, dictionary, dragAndDrop, gameData, fieldFacade,infoHandler),
+                new BotStepState(this, fieldFacade, complexityHolder, gameData,infoHandler),
                 new ResultState(this,gameData,newLettersPanel),
             };
 

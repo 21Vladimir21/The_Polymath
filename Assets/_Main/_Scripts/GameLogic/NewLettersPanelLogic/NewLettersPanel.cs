@@ -20,12 +20,21 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
         public void Initialize(LettersPool lettersPool)
         {
             _lettersPool = lettersPool;
-            
+
             var savesService = ServiceLocator.Instance.GetServiceByType<SavesService>();
             _saves = savesService.Saves;
         }
-        
-        
+
+        public int GetTilesCout()
+        {
+            int count = 0;
+            foreach (var cell in Cells)
+                if (cell.IsBusy)
+                    count++;
+
+            return count;
+        }
+
 
         public void SaveLetters() => _saves.SaveLetterInPanel(Cells);
 
@@ -37,15 +46,16 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
                 ReturnTileToFreeCell(tile);
             }
         }
+
         public void SetNewLettersInPanel()
         {
             var freeCells = GetFreeCells();
             foreach (var cell in freeCells)
             {
                 var tile = _lettersPool.GetRandomTile();
-                cell.AddTileAndAllowMove(tile,false);
+                cell.AddTileAndAllowMove(tile, false);
             }
-            
+
             SaveLetters();
         }
 
@@ -106,7 +116,7 @@ namespace _Main._Scripts.GameLogic.NewLettersPanelLogic
         public void ReturnTileToFreeCell(LetterTile tile)
         {
             var freeCells = GetFreeCells();
-            freeCells[0].AddTileAndAllowMove(tile,false);
+            freeCells[0].AddTileAndAllowMove(tile, false);
         }
 
         public void UpAndShakeAllTiles()

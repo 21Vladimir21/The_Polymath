@@ -257,7 +257,7 @@ namespace _Main._Scripts.GameLogic.PlayingFieldLogic.FieldFacadeLogic
         {
             var wordPoints = GetWordPoints(modifiedWord, newWord, isHorizontal,
                 coordinates);
-            _gameData.PCPoints += wordPoints;
+            _gameData.BotPoints += wordPoints;
         }
 
         private int GetWordPoints(string modifiedWord, string newWord, bool isHorizontal, Vector2Int startCoords)

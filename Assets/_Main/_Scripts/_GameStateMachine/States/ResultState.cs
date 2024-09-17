@@ -32,7 +32,7 @@ namespace _Main._Scripts._GameStateMachine.States
         {
             _saves.HasStartGame = false;
             _newLettersPanel.ReturnAllTilesToPool();
-            _resultView.SetResult(_gameData.PlayerPoints,_gameData.PCPoints);
+            _resultView.SetResult(_gameData.PlayerPoints,_gameData.BotPoints);
             _resultView.Open();
         }
 
